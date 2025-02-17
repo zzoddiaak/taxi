@@ -1,0 +1,118 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-passengers
+      author: Daniil
+      changes:
+        - createTable:
+            tableName: passengers
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: phone_number
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+
+
+  - changeSet:
+      id: insert-table-passengers
+      author: Daniil
+      changes:
+        - insert:
+            tableName: passengers
+            columns:
+              - column:
+                  name: first_name
+                  value: Иван
+              - column:
+                  name: last_name
+                  value: Иванов
+              - column:
+                  name: email
+                  value: ivan.ivanov@example.com
+              - column:
+                  name: phone_number
+                  value: '+79161234567'
+        - insert:
+            tableName: passengers
+            columns:
+              - column:
+                  name: first_name
+                  value: Мария
+              - column:
+                  name: last_name
+                  value: Петрова
+              - column:
+                  name: email
+                  value: maria.petrova@example.com
+              - column:
+                  name: phone_number
+                  value: '+79162345678'
+        - insert:
+            tableName: passengers
+            columns:
+              - column:
+                  name: first_name
+                  value: Алексей
+              - column:
+                  name: last_name
+                  value: Сидоров
+              - column:
+                  name: email
+                  value: alexey.sidorov@example.com
+              - column:
+                  name: phone_number
+                  value: '+79163456789'
+        - insert:
+            tableName: passengers
+            columns:
+              - column:
+                  name: first_name
+                  value: Елена
+              - column:
+                  name: last_name
+                  value: Кузнецова
+              - column:
+                  name: email
+                  value: elena.kuznetsova@example.com
+              - column:
+                  name: phone_number
+                  value: '+79164567890'
+        - insert:
+            tableName: passengers
+            columns:
+              - column:
+                  name: first_name
+                  value: Дмитрий
+              - column:
+                  name: last_name
+                  value: Смирнов
+              - column:
+                  name: email
+                  value: dmitry.smirnov@example.com
+              - column:
+                  name: phone_number
+                  value: '+79165678901'
