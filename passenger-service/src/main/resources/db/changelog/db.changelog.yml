@@ -34,8 +34,27 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     unique: true
-
-
+              - column:
+                  name: average_rating
+                  type: DOUBLE PRECISION
+                  defaultValue: 0.0
+              - column:
+                  name: rating_count
+                  type: INTEGER
+                  defaultValue: 0
+              - column:
+                  name: balance
+                  type: DOUBLE PRECISION
+                  defaultValue: 0.0
+              - column:
+                  name: card_number
+                  type: VARCHAR(16)
+              - column:
+                  name: card_expiry_date
+                  type: VARCHAR(5)
+              - column:
+                  name: card_cvv
+                  type: VARCHAR(3)
 
   - changeSet:
       id: insert-table-passengers
@@ -56,6 +75,24 @@ databaseChangeLog:
               - column:
                   name: phone_number
                   value: '+79161234567'
+              - column:
+                  name: average_rating
+                  value: 0.0
+              - column:
+                  name: rating_count
+                  value: 0
+              - column:
+                  name: balance
+                  value: 0.0
+              - column:
+                  name: card_number
+                  value: '4111111111111111'
+              - column:
+                  name: card_expiry_date
+                  value: '12/25'
+              - column:
+                  name: card_cvv
+                  value: '123'
         - insert:
             tableName: passengers
             columns:
@@ -71,6 +108,24 @@ databaseChangeLog:
               - column:
                   name: phone_number
                   value: '+79162345678'
+              - column:
+                  name: average_rating
+                  value: 0.0
+              - column:
+                  name: rating_count
+                  value: 0
+              - column:
+                  name: balance
+                  value: 0.0
+              - column:
+                  name: card_number
+                  value: '5555555555554444'
+              - column:
+                  name: card_expiry_date
+                  value: '06/24'
+              - column:
+                  name: card_cvv
+                  value: '456'
         - insert:
             tableName: passengers
             columns:
@@ -86,6 +141,24 @@ databaseChangeLog:
               - column:
                   name: phone_number
                   value: '+79163456789'
+              - column:
+                  name: average_rating
+                  value: 0.0
+              - column:
+                  name: rating_count
+                  value: 0
+              - column:
+                  name: balance
+                  value: 0.0
+              - column:
+                  name: card_number
+                  value: '378282246310005'
+              - column:
+                  name: card_expiry_date
+                  value: '09/23'
+              - column:
+                  name: card_cvv
+                  value: '789'
         - insert:
             tableName: passengers
             columns:
@@ -101,6 +174,24 @@ databaseChangeLog:
               - column:
                   name: phone_number
                   value: '+79164567890'
+              - column:
+                  name: average_rating
+                  value: 0.0
+              - column:
+                  name: rating_count
+                  value: 0
+              - column:
+                  name: balance
+                  value: 0.0
+              - column:
+                  name: card_number
+                  value: '6011111111111117'
+              - column:
+                  name: card_expiry_date
+                  value: '03/26'
+              - column:
+                  name: card_cvv
+                  value: '321'
         - insert:
             tableName: passengers
             columns:
@@ -116,3 +207,21 @@ databaseChangeLog:
               - column:
                   name: phone_number
                   value: '+79165678901'
+              - column:
+                  name: average_rating
+                  value: 0.0
+              - column:
+                  name: rating_count
+                  value: 0
+              - column:
+                  name: balance
+                  value: 0.0
+              - column:
+                  name: card_number
+                  value: '3530111333300000'
+              - column:
+                  name: card_expiry_date
+                  value: '11/27'
+              - column:
+                  name: card_cvv
+                  value: '654'
