@@ -1,0 +1,119 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-ratings
+      author: Daniil
+      changes:
+        - createTable:
+            tableName: ratings
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    autoIncrement: true
+              - column:
+                  name: driver_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: passenger_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rating
+                  type: FLOAT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: comment
+                  type: TEXT
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: insert-test-ratings
+      author: Daniil
+      changes:
+        - insert:
+            tableName: ratings
+            columns:
+              - column:
+                  name: driver_id
+                  value: 1
+              - column:
+                  name: passenger_id
+                  value: 1
+              - column:
+                  name: rating
+                  value: 4.5
+              - column:
+                  name: comment
+                  value: "Отличный водитель, вежливый и аккуратный."
+        - insert:
+            tableName: ratings
+            columns:
+              - column:
+                  name: driver_id
+                  value: 2
+              - column:
+                  name: passenger_id
+                  value: 2
+              - column:
+                  name: rating
+                  value: 3.8
+              - column:
+                  name: comment
+                  value: "Все было хорошо, но немного медленно."
+        - insert:
+            tableName: ratings
+            columns:
+              - column:
+                  name: driver_id
+                  value: 3
+              - column:
+                  name: passenger_id
+                  value: 3
+              - column:
+                  name: rating
+                  value: 5.0
+              - column:
+                  name: comment
+                  value: "Лучший водитель, рекомендую!"
+        - insert:
+            tableName: ratings
+            columns:
+              - column:
+                  name: driver_id
+                  value: 4
+              - column:
+                  name: passenger_id
+                  value: 4
+              - column:
+                  name: rating
+                  value: 2.5
+              - column:
+                  name: comment
+                  value: "Машина была грязная, водитель грубил."
+        - insert:
+            tableName: ratings
+            columns:
+              - column:
+                  name: driver_id
+                  value: 5
+              - column:
+                  name: passenger_id
+                  value: 5
+              - column:
+                  name: rating
+                  value: 4.0
+              - column:
+                  name: comment
+                  value: "Нормально, но могло быть лучше."
