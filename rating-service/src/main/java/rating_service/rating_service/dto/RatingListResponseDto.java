@@ -5,16 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RatingRequestDto {
+public class RatingListResponseDto {
 
-    private Long driverId;
-    private Long passengerId;
-    private Float rating;
-    private String comment;
-
+    private List<RatingResponseDto> ratings;
 
 }

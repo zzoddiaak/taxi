@@ -15,5 +15,11 @@ public class PassengerResponseDto {
     private String firstName;
     private String lastName;
     private String email;
-    private Integer phoneNumber;
+    private String phoneNumber;
+    private Double averageRating;
+    private Integer ratingCount;
+    private Double balance;
+    private String cardNumber;
+    private String cardExpiryDate;
+    private String cardCvv;
 }

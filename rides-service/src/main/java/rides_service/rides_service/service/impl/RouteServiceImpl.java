@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import rides_service.rides_service.config.mapper.DtoMapper;
+import rides_service.rides_service.dto.route.RouteListResponseDto;
 import rides_service.rides_service.dto.route.RouteRequestDto;
 import rides_service.rides_service.dto.route.RouteResponseDto;
 import rides_service.rides_service.entity.Route;
@@ -32,22 +33,26 @@ public class RouteServiceImpl implements RouteService {
     @Override
     public RouteResponseDto getRouteById(Long id) {
         Route route = routeRepository.findById(id)
-                .orElseThrow(() -> new RouteNotFoundException("Route not found with id: " + id));
+                .orElseThrow(() -> new RouteNotFoundException(String.format("Route not found with id: " + id)));
         return mapper.convertToDto(route, RouteResponseDto.class);
     }
 
     @Override
-    public List<RouteResponseDto> getAllRoutes() {
+    public RouteListResponseDto getAllRoutes() {
         List<Route> routes = routeRepository.findAll();
-        return routes.stream()
+        List<RouteResponseDto> routeResponseDto = routes.stream()
                 .map(route -> mapper.convertToDto(route, RouteResponseDto.class))
-                .collect(Collectors.toList());
+                .toList();
+
+        return RouteListResponseDto.builder()
+                .route(routeResponseDto)
+                .build();
     }
 
     @Override
     public RouteResponseDto updateRoute(Long id, RouteRequestDto routeRequestDto) {
         Route existingRoute = routeRepository.findById(id)
-                .orElseThrow(() -> new RouteNotFoundException("Route not found with id: " + id));
+                .orElseThrow(() -> new RouteNotFoundException(String.format("Route not found with id: " + id)));
 
         existingRoute.setStartAddress(routeRequestDto.getStartAddress());
         existingRoute.setEndAddress(routeRequestDto.getEndAddress());
@@ -61,7 +66,7 @@ public class RouteServiceImpl implements RouteService {
     @Override
     public void deleteRoute(Long id) {
         Route route = routeRepository.findById(id)
-                .orElseThrow(() -> new RouteNotFoundException("Route not found with id: " + id));
+                .orElseThrow(() -> new RouteNotFoundException(String.format("Route not found with id: " + id)));
         routeRepository.delete(route);
     }
 }

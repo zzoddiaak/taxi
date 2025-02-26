@@ -1,5 +1,6 @@
 package driver_service.driver_service.controller;
 
+import driver_service.driver_service.dto.DriverListResponseDto;
 import driver_service.driver_service.dto.DriverRequestDto;
 import driver_service.driver_service.dto.DriverResponseDto;
 import driver_service.driver_service.service.api.DriverService;
@@ -30,9 +31,9 @@ public class DriverController {
     }
 
     @GetMapping
-    public ResponseEntity<List<DriverResponseDto>> getAllDrivers(){
-        List<DriverResponseDto> driverResponseDto = service.getAllDrivers();
-        return ResponseEntity.ok(driverResponseDto);
+    public ResponseEntity<DriverListResponseDto> getAllDrivers(){
+        DriverListResponseDto driverListResponseDto = service.getAllDrivers();
+        return ResponseEntity.ok(driverListResponseDto);
     }
 
     @PutMapping("/{id}")

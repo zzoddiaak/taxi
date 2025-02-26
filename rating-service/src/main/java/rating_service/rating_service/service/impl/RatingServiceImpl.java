@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import rating_service.rating_service.config.mapper.DtoMapper;
+import rating_service.rating_service.dto.RatingListResponseDto;
 import rating_service.rating_service.dto.RatingRequestDto;
 import rating_service.rating_service.dto.RatingResponseDto;
 import rating_service.rating_service.entity.Rating;
@@ -34,22 +35,26 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public RatingResponseDto getRatingById(Long id) {
         Rating rating = ratingRepository.findById(id)
-                .orElseThrow(() -> new RatingNotFoundException("Rating not found with id: " + id));
+                .orElseThrow(() -> new RatingNotFoundException(String.format("Rating not found with id: " + id)));
         return mapper.convertToDto(rating, RatingResponseDto.class);
     }
 
     @Override
-    public List<RatingResponseDto> getAllRatings() {
+    public RatingListResponseDto getAllRatings() {
         List<Rating> ratings = ratingRepository.findAll();
-        return ratings.stream()
-                .map(rating -> mapper.convertToDto(rating, RatingResponseDto.class))
-                .collect(Collectors.toList());
+        List<RatingResponseDto> ratingResponseDto = ratings.stream()
+                .map(payment -> mapper.convertToDto(payment, RatingResponseDto.class))
+                .toList();
+
+        return RatingListResponseDto.builder()
+                .ratings(ratingResponseDto)
+                .build();
     }
 
     @Override
     public RatingResponseDto updateRating(Long id, RatingRequestDto ratingRequestDto) {
         Rating existingRating = ratingRepository.findById(id)
-                .orElseThrow(() -> new RatingNotFoundException("Rating not found with id: " + id));
+                .orElseThrow(() -> new RatingNotFoundException(String.format("Rating not found with id: " + id)));
 
         existingRating.setDriverId(ratingRequestDto.getDriverId());
         existingRating.setPassengerId(ratingRequestDto.getPassengerId());
@@ -63,7 +68,7 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public void deleteRating(Long id) {
         Rating rating = ratingRepository.findById(id)
-                .orElseThrow(() -> new RatingNotFoundException("Rating not found with id: " + id));
+                .orElseThrow(() -> new RatingNotFoundException(String.format("Rating not found with id: " + id)));
         ratingRepository.delete(rating);
     }
 }

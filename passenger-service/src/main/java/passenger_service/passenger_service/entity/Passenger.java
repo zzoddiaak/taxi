@@ -26,7 +26,23 @@ public class Passenger {
     private String email;
 
     @Column(name = "phone_number", nullable = false)
-    private Integer phoneNumber;
+    private String phoneNumber;
 
+    @Column(name = "average_rating")
+    private Double averageRating;
 
+    @Column(name = "rating_count")
+    private Integer ratingCount;
+
+    @Column(name = "balance")
+    private Double balance;
+
+    @Column(name = "card_number")
+    private String cardNumber;
+
+    @Column(name = "card_expiry_date")
+    private String cardExpiryDate;
+
+    @Column(name = "card_cvv")
+    private String cardCvv;
 }
