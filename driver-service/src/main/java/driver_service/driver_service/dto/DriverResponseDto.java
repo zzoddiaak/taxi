@@ -15,9 +15,11 @@ public class DriverResponseDto {
     private String firstName;
     private String lastName;
     private String email;
-    private Integer phoneNumber;
-    private Integer licenseNumber;
+    private String phoneNumber;
+    private String licenseNumber;
     private String carModel;
     private String carPlateNumber;
-
+    private Double averageRating;
+    private Integer ratingCount;
+    private Double passengerRating;
 }

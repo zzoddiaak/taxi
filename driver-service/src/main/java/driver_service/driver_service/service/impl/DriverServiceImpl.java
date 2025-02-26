@@ -1,6 +1,7 @@
 package driver_service.driver_service.service.impl;
 
 import driver_service.driver_service.config.mapper.DtoMapper;
+import driver_service.driver_service.dto.DriverListResponseDto;
 import driver_service.driver_service.dto.DriverRequestDto;
 import driver_service.driver_service.dto.DriverResponseDto;
 import driver_service.driver_service.entity.Driver;
@@ -25,6 +26,8 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public DriverResponseDto createDriver(DriverRequestDto driverRequestDto) {
         Driver driver = mapper.convertToEntity(driverRequestDto, Driver.class);
+        driver.setAverageRating(0.0);
+        driver.setRatingCount(0);
         Driver savedDriver = repository.save(driver);
         return mapper.convertToDto(savedDriver, DriverResponseDto.class);
     }
@@ -32,22 +35,28 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public DriverResponseDto getDriverById(Long id) {
         Driver driver = repository.findById(id)
-                .orElseThrow(() -> new DriverNotFoundException("Driver not found with id: " + id));
+                .orElseThrow(() -> new DriverNotFoundException(String.format("Driver not found with id: " + id)));
         return mapper.convertToDto(driver, DriverResponseDto.class);
     }
 
     @Override
-    public List<DriverResponseDto> getAllDrivers() {
+    public DriverListResponseDto getAllDrivers() {
         List<Driver> drivers = repository.findAll();
-        return drivers.stream()
+
+        List<DriverResponseDto> driverResponseDto = drivers.stream()
                 .map(driver -> mapper.convertToDto(driver, DriverResponseDto.class))
-                .collect(Collectors.toList());
+                .toList();
+
+        return DriverListResponseDto.builder()
+                .drivers(driverResponseDto)
+                .build();
+
     }
 
     @Override
     public DriverResponseDto updateDriver(Long id, DriverRequestDto driverRequestDto) {
         Driver driver = repository.findById(id)
-                .orElseThrow(() -> new DriverNotFoundException("Driver not found with id: " + id));
+                .orElseThrow(() -> new DriverNotFoundException(String.format("Driver not found with id: " + id)));
 
         driver.setFirstName(driverRequestDto.getFirstName());
         driver.setLastName(driverRequestDto.getLastName());
@@ -56,6 +65,7 @@ public class DriverServiceImpl implements DriverService {
         driver.setCarModel(driverRequestDto.getCarModel());
         driver.setLicenseNumber(driverRequestDto.getLicenseNumber());
         driver.setCarPlateNumber(driverRequestDto.getCarPlateNumber());
+        driver.setPassengerRating(driverRequestDto.getPassengerRating());
 
         Driver updatedDriver = repository.save(driver);
         return mapper.convertToDto(updatedDriver, DriverResponseDto.class);
@@ -64,8 +74,7 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public void deleteDriver(Long id) {
         Driver driver = repository.findById(id)
-                .orElseThrow(() -> new DriverNotFoundException("Driver not found with id: " + id));
+                .orElseThrow(() -> new DriverNotFoundException(String.format("Driver not found with id: " + id)));
         repository.delete(driver);
-
     }
 }

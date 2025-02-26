@@ -14,7 +14,7 @@ public class PassengerRequestDto {
     private String firstName;
     private String lastName;
     private String email;
-    private Integer phoneNumber;
+    private String phoneNumber;
     private Double balance;
     private String cardNumber;
     private String cardExpiryDate;

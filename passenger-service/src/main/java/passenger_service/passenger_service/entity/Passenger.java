@@ -26,7 +26,7 @@ public class Passenger {
     private String email;
 
     @Column(name = "phone_number", nullable = false)
-    private Integer phoneNumber;
+    private String phoneNumber;
 
     @Column(name = "average_rating")
     private Double averageRating;

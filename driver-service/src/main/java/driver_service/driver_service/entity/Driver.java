@@ -26,15 +26,23 @@ public class Driver {
     private String email;
 
     @Column(name = "phone_number", nullable = false)
-    private Integer phoneNumber;
+    private String phoneNumber;
 
     @Column(name = "license_number", nullable = false)
-    private Integer licenseNumber;
+    private String licenseNumber;
 
-    @Column(name = "license_number")
+    @Column(name = "car_model")
     private String carModel;
 
     @Column(name = "car_plate_number")
     private String carPlateNumber;
 
+    @Column(name = "average_rating")
+    private Double averageRating;
+
+    @Column(name = "rating_count")
+    private Integer ratingCount;
+
+    @Column(name = "passenger_rating")
+    private Double passengerRating;
 }

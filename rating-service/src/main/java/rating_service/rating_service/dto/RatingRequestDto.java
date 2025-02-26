@@ -15,4 +15,6 @@ public class RatingRequestDto {
     private Long passengerId;
     private Float rating;
     private String comment;
+
+
 }

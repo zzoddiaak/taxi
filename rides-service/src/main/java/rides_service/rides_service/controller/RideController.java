@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rides_service.rides_service.dto.ride.RideListResponseDto;
 import rides_service.rides_service.dto.ride.RideRequestDto;
 import rides_service.rides_service.dto.ride.RideResponseDto;
 import rides_service.rides_service.service.api.RideService;
@@ -30,8 +31,8 @@ public class RideController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RideResponseDto>> getAllRides() {
-        List<RideResponseDto> rides = rideService.getAllRides();
+    public ResponseEntity<RideListResponseDto> getAllRides() {
+        RideListResponseDto rides = rideService.getAllRides();
         return ResponseEntity.ok(rides);
     }
 

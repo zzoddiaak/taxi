@@ -1,6 +1,7 @@
 package passenger_service.passenger_service.controller;
 
 import lombok.RequiredArgsConstructor;
+import passenger_service.passenger_service.dto.PassengerListResponseDto;
 import passenger_service.passenger_service.dto.PassengerRequestDto;
 import passenger_service.passenger_service.dto.PassengerResponseDto;
 import org.springframework.http.HttpStatus;
@@ -30,8 +31,8 @@ public class PassengerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PassengerResponseDto>> getAllPassengers() {
-        List<PassengerResponseDto> passengers = passengerService.getAllPassengers();
+    public ResponseEntity<PassengerListResponseDto> getAllPassengers() {
+        PassengerListResponseDto passengers = passengerService.getAllPassengers();
         return ResponseEntity.ok(passengers);
     }
 

@@ -49,6 +49,18 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     unique: true
+              - column:
+                  name: average_rating
+                  type: DOUBLE PRECISION
+                  defaultValue: 0.0
+              - column:
+                  name: rating_count
+                  type: INTEGER
+                  defaultValue: 0
+              - column:
+                  name: passenger_rating
+                  type: DOUBLE PRECISION
+                  defaultValue: 0.0
 
   - changeSet:
       id: insert-table-drivers
@@ -78,6 +90,15 @@ databaseChangeLog:
               - column:
                   name: car_plate_number
                   value: 'A123BC77'
+              - column:
+                  name: average_rating
+                  value: 0.0
+              - column:
+                  name: rating_count
+                  value: 0
+              - column:
+                  name: passenger_rating
+                  value: 0.0
         - insert:
             tableName: drivers
             columns:
@@ -102,6 +123,15 @@ databaseChangeLog:
               - column:
                   name: car_plate_number
                   value: 'B456DE78'
+              - column:
+                  name: average_rating
+                  value: 0.0
+              - column:
+                  name: rating_count
+                  value: 0
+              - column:
+                  name: passenger_rating
+                  value: 0.0
         - insert:
             tableName: drivers
             columns:
@@ -126,6 +156,15 @@ databaseChangeLog:
               - column:
                   name: car_plate_number
                   value: 'C789EF79'
+              - column:
+                  name: average_rating
+                  value: 0.0
+              - column:
+                  name: rating_count
+                  value: 0
+              - column:
+                  name: passenger_rating
+                  value: 0.0
         - insert:
             tableName: drivers
             columns:
@@ -150,6 +189,15 @@ databaseChangeLog:
               - column:
                   name: car_plate_number
                   value: 'D012GH80'
+              - column:
+                  name: average_rating
+                  value: 0.0
+              - column:
+                  name: rating_count
+                  value: 0
+              - column:
+                  name: passenger_rating
+                  value: 0.0
         - insert:
             tableName: drivers
             columns:
@@ -174,3 +222,12 @@ databaseChangeLog:
               - column:
                   name: car_plate_number
                   value: 'E345IJ81'
+              - column:
+                  name: average_rating
+                  value: 0.0
+              - column:
+                  name: rating_count
+                  value: 0
+              - column:
+                  name: passenger_rating
+                  value: 0.0
