@@ -1,0 +1,176 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-drivers
+      author: Daniil
+      changes:
+        - createTable:
+            tableName: drivers
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: phone_number
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: license_number
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: car_model
+                  type: VARCHAR(100)
+              - column:
+                  name: car_plate_number
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: insert-table-drivers
+      author: Daniil
+      changes:
+        - insert:
+            tableName: drivers
+            columns:
+              - column:
+                  name: first_name
+                  value: Андрей
+              - column:
+                  name: last_name
+                  value: Васильев
+              - column:
+                  name: email
+                  value: andrey.vasiliev@example.com
+              - column:
+                  name: phone_number
+                  value: '+79166789012'
+              - column:
+                  name: license_number
+                  value: 'AB123456'
+              - column:
+                  name: car_model
+                  value: 'Toyota Camry'
+              - column:
+                  name: car_plate_number
+                  value: 'A123BC77'
+        - insert:
+            tableName: drivers
+            columns:
+              - column:
+                  name: first_name
+                  value: Ольга
+              - column:
+                  name: last_name
+                  value: Николаева
+              - column:
+                  name: email
+                  value: olga.nikolaeva@example.com
+              - column:
+                  name: phone_number
+                  value: '+79167890123'
+              - column:
+                  name: license_number
+                  value: 'CD654321'
+              - column:
+                  name: car_model
+                  value: 'Hyundai Solaris'
+              - column:
+                  name: car_plate_number
+                  value: 'B456DE78'
+        - insert:
+            tableName: drivers
+            columns:
+              - column:
+                  name: first_name
+                  value: Сергей
+              - column:
+                  name: last_name
+                  value: Михайлов
+              - column:
+                  name: email
+                  value: sergey.mikhailov@example.com
+              - column:
+                  name: phone_number
+                  value: '+79168901234'
+              - column:
+                  name: license_number
+                  value: 'EF987654'
+              - column:
+                  name: car_model
+                  value: 'Kia Rio'
+              - column:
+                  name: car_plate_number
+                  value: 'C789EF79'
+        - insert:
+            tableName: drivers
+            columns:
+              - column:
+                  name: first_name
+                  value: Татьяна
+              - column:
+                  name: last_name
+                  value: Федорова
+              - column:
+                  name: email
+                  value: tatyana.fedorova@example.com
+              - column:
+                  name: phone_number
+                  value: '+79169012345'
+              - column:
+                  name: license_number
+                  value: 'GH321654'
+              - column:
+                  name: car_model
+                  value: 'Lada Vesta'
+              - column:
+                  name: car_plate_number
+                  value: 'D012GH80'
+        - insert:
+            tableName: drivers
+            columns:
+              - column:
+                  name: first_name
+                  value: Павел
+              - column:
+                  name: last_name
+                  value: Алексеев
+              - column:
+                  name: email
+                  value: pavel.alexeev@example.com
+              - column:
+                  name: phone_number
+                  value: '+79160123456'
+              - column:
+                  name: license_number
+                  value: 'IJ654987'
+              - column:
+                  name: car_model
+                  value: 'Volkswagen Polo'
+              - column:
+                  name: car_plate_number
+                  value: 'E345IJ81'
