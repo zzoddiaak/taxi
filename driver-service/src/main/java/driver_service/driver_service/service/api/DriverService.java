@@ -1,10 +1,8 @@
 package driver_service.driver_service.service.api;
 
-import driver_service.driver_service.dto.DriverListResponseDto;
-import driver_service.driver_service.dto.DriverRequestDto;
-import driver_service.driver_service.dto.DriverResponseDto;
-
-import java.util.List;
+import driver_service.driver_service.dto.driver.DriverListResponseDto;
+import driver_service.driver_service.dto.driver.DriverRequestDto;
+import driver_service.driver_service.dto.driver.DriverResponseDto;
 
 public interface DriverService {
 

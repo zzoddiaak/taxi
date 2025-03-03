@@ -41,15 +41,6 @@ databaseChangeLog:
                     nullable: false
                     unique: true
               - column:
-                  name: car_model
-                  type: VARCHAR(100)
-              - column:
-                  name: car_plate_number
-                  type: VARCHAR(20)
-                  constraints:
-                    nullable: false
-                    unique: true
-              - column:
                   name: average_rating
                   type: DOUBLE PRECISION
                   defaultValue: 0.0
@@ -63,6 +54,96 @@ databaseChangeLog:
                   defaultValue: 0.0
 
   - changeSet:
+      id: create-table-cars
+      author: Daniil
+      changes:
+        - createTable:
+            tableName: cars
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: model
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: plate_number
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: add-car-id-to-drivers
+      author: Daniil
+      changes:
+        - addColumn:
+            tableName: drivers
+            columns:
+              - column:
+                  name: car_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+                    foreignKeyName: fk_driver_car
+                    references: cars(id)
+
+  - changeSet:
+      id: insert-table-cars
+      author: Daniil
+      changes:
+        - insert:
+            tableName: cars
+            columns:
+              - column:
+                  name: model
+                  value: 'Toyota Camry'
+              - column:
+                  name: plate_number
+                  value: 'A123BC77'
+        - insert:
+            tableName: cars
+            columns:
+              - column:
+                  name: model
+                  value: 'Hyundai Solaris'
+              - column:
+                  name: plate_number
+                  value: 'B456DE78'
+        - insert:
+            tableName: cars
+            columns:
+              - column:
+                  name: model
+                  value: 'Kia Rio'
+              - column:
+                  name: plate_number
+                  value: 'C789EF79'
+        - insert:
+            tableName: cars
+            columns:
+              - column:
+                  name: model
+                  value: 'Lada Vesta'
+              - column:
+                  name: plate_number
+                  value: 'D012GH80'
+        - insert:
+            tableName: cars
+            columns:
+              - column:
+                  name: model
+                  value: 'Volkswagen Polo'
+              - column:
+                  name: plate_number
+                  value: 'E345IJ81'
+
+  - changeSet:
       id: insert-table-drivers
       author: Daniil
       changes:
@@ -71,13 +152,13 @@ databaseChangeLog:
             columns:
               - column:
                   name: first_name
-                  value: Андрей
+                  value: 'Андрей'
               - column:
                   name: last_name
-                  value: Васильев
+                  value: 'Васильев'
               - column:
                   name: email
-                  value: andrey.vasiliev@example.com
+                  value: 'andrey.vasiliev@example.com'
               - column:
                   name: phone_number
                   value: '+79166789012'
@@ -85,11 +166,8 @@ databaseChangeLog:
                   name: license_number
                   value: 'AB123456'
               - column:
-                  name: car_model
-                  value: 'Toyota Camry'
-              - column:
-                  name: car_plate_number
-                  value: 'A123BC77'
+                  name: car_id
+                  value: 1
               - column:
                   name: average_rating
                   value: 0.0
@@ -104,13 +182,13 @@ databaseChangeLog:
             columns:
               - column:
                   name: first_name
-                  value: Ольга
+                  value: 'Ольга'
               - column:
                   name: last_name
-                  value: Николаева
+                  value: 'Николаева'
               - column:
                   name: email
-                  value: olga.nikolaeva@example.com
+                  value: 'olga.nikolaeva@example.com'
               - column:
                   name: phone_number
                   value: '+79167890123'
@@ -118,11 +196,8 @@ databaseChangeLog:
                   name: license_number
                   value: 'CD654321'
               - column:
-                  name: car_model
-                  value: 'Hyundai Solaris'
-              - column:
-                  name: car_plate_number
-                  value: 'B456DE78'
+                  name: car_id
+                  value: 2
               - column:
                   name: average_rating
                   value: 0.0
@@ -137,13 +212,13 @@ databaseChangeLog:
             columns:
               - column:
                   name: first_name
-                  value: Сергей
+                  value: 'Сергей'
               - column:
                   name: last_name
-                  value: Михайлов
+                  value: 'Михайлов'
               - column:
                   name: email
-                  value: sergey.mikhailov@example.com
+                  value: 'sergey.mikhailov@example.com'
               - column:
                   name: phone_number
                   value: '+79168901234'
@@ -151,11 +226,8 @@ databaseChangeLog:
                   name: license_number
                   value: 'EF987654'
               - column:
-                  name: car_model
-                  value: 'Kia Rio'
-              - column:
-                  name: car_plate_number
-                  value: 'C789EF79'
+                  name: car_id
+                  value: 3
               - column:
                   name: average_rating
                   value: 0.0
@@ -170,13 +242,13 @@ databaseChangeLog:
             columns:
               - column:
                   name: first_name
-                  value: Татьяна
+                  value: 'Татьяна'
               - column:
                   name: last_name
-                  value: Федорова
+                  value: 'Федорова'
               - column:
                   name: email
-                  value: tatyana.fedorova@example.com
+                  value: 'tatyana.fedorova@example.com'
               - column:
                   name: phone_number
                   value: '+79169012345'
@@ -184,11 +256,8 @@ databaseChangeLog:
                   name: license_number
                   value: 'GH321654'
               - column:
-                  name: car_model
-                  value: 'Lada Vesta'
-              - column:
-                  name: car_plate_number
-                  value: 'D012GH80'
+                  name: car_id
+                  value: 4
               - column:
                   name: average_rating
                   value: 0.0
@@ -203,13 +272,13 @@ databaseChangeLog:
             columns:
               - column:
                   name: first_name
-                  value: Павел
+                  value: 'Павел'
               - column:
                   name: last_name
-                  value: Алексеев
+                  value: 'Алексеев'
               - column:
                   name: email
-                  value: pavel.alexeev@example.com
+                  value: 'pavel.alexeev@example.com'
               - column:
                   name: phone_number
                   value: '+79160123456'
@@ -217,11 +286,8 @@ databaseChangeLog:
                   name: license_number
                   value: 'IJ654987'
               - column:
-                  name: car_model
-                  value: 'Volkswagen Polo'
-              - column:
-                  name: car_plate_number
-                  value: 'E345IJ81'
+                  name: car_id
+                  value: 5
               - column:
                   name: average_rating
                   value: 0.0

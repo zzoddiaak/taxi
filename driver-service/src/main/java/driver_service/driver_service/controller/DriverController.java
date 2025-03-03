@@ -1,18 +1,16 @@
 package driver_service.driver_service.controller;
 
-import driver_service.driver_service.dto.DriverListResponseDto;
-import driver_service.driver_service.dto.DriverRequestDto;
-import driver_service.driver_service.dto.DriverResponseDto;
+import driver_service.driver_service.dto.driver.DriverListResponseDto;
+import driver_service.driver_service.dto.driver.DriverRequestDto;
+import driver_service.driver_service.dto.driver.DriverResponseDto;
 import driver_service.driver_service.service.api.DriverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/drivers")
+@RequestMapping("/api/v1/drivers")
 @RequiredArgsConstructor
 public class DriverController {
 
@@ -46,6 +44,5 @@ public class DriverController {
     public ResponseEntity<Void> deleteDriver(@PathVariable Long id){
         service.deleteDriver(id);
         return ResponseEntity.noContent().build();
-
     }
 }

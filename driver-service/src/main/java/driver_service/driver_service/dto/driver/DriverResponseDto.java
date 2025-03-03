@@ -1,5 +1,7 @@
-package driver_service.driver_service.dto;
+package driver_service.driver_service.dto.driver;
 
+import driver_service.driver_service.dto.rating.RatingDto;
+import driver_service.driver_service.dto.car.CarDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,14 +11,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DriverRequestDto {
-
+public class DriverResponseDto {
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;
     private String phoneNumber;
     private String licenseNumber;
-    private String carModel;
-    private String carPlateNumber;
-    private Double passengerRating;
+    private CarDto car;
+    private RatingDto rating;
 }

@@ -6,11 +6,16 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AppConfig {
-
     @Bean
-    public ModelMapper modelMapper(){
+    public ModelMapper modelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setFieldMatchingEnabled(true)
+                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
+                .setMethodAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PUBLIC)
+                .setSkipNullEnabled(true);
+        return modelMapper;
 
-        return new ModelMapper();
     }
 
 }
