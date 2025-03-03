@@ -31,11 +31,9 @@ public class Driver {
     @Column(name = "license_number", nullable = false)
     private String licenseNumber;
 
-    @Column(name = "car_model")
-    private String carModel;
-
-    @Column(name = "car_plate_number")
-    private String carPlateNumber;
+    @OneToOne
+    @JoinColumn(name = "car_id", referencedColumnName = "id")
+    private Car car;
 
     @Column(name = "average_rating")
     private Double averageRating;

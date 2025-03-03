@@ -1,5 +1,7 @@
 package driver_service.driver_service.exception;
 
+import driver_service.driver_service.exception.car.CarAlreadyAssignedException;
+import driver_service.driver_service.exception.car.CarNotFoundException;
 import driver_service.driver_service.exception.driver.DriverNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +22,9 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(DriverNotFoundException.class)
+    @ExceptionHandler({DriverNotFoundException.class,
+                        CarNotFoundException.class,
+                        CarAlreadyAssignedException.class})
     public ResponseEntity<Object> handleDriverNotFoundException(
             DriverNotFoundException ex, WebRequest request) {
 

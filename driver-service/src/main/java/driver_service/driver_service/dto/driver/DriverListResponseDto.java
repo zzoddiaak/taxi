@@ -1,4 +1,4 @@
-package driver_service.driver_service.dto;
+package driver_service.driver_service.dto.driver;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
