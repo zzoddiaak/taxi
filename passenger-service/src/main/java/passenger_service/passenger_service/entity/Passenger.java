@@ -2,10 +2,9 @@ package passenger_service.passenger_service.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 @Entity
-@Setter
 @Getter
+@Setter
 @Table(name = "passengers")
 @Builder
 @NoArgsConstructor
@@ -34,15 +33,8 @@ public class Passenger {
     @Column(name = "rating_count")
     private Integer ratingCount;
 
-    @Column(name = "balance")
-    private Double balance;
-
-    @Column(name = "card_number")
-    private String cardNumber;
-
-    @Column(name = "card_expiry_date")
-    private String cardExpiryDate;
-
-    @Column(name = "card_cvv")
-    private String cardCvv;
+    @OneToOne(mappedBy = "passenger", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private FinancialData financialData;
 }
+
+

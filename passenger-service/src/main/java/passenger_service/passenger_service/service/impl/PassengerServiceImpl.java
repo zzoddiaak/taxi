@@ -7,8 +7,10 @@ import passenger_service.passenger_service.config.mapper.DtoMapper;
 import passenger_service.passenger_service.dto.PassengerListResponseDto;
 import passenger_service.passenger_service.dto.PassengerRequestDto;
 import passenger_service.passenger_service.dto.PassengerResponseDto;
+import passenger_service.passenger_service.entity.FinancialData;
 import passenger_service.passenger_service.entity.Passenger;
 import passenger_service.passenger_service.exception.passenger.PassengerNotFoundException;
+import passenger_service.passenger_service.repository.FinancialDataRepository;
 import passenger_service.passenger_service.repository.PassengerRepository;
 import passenger_service.passenger_service.service.api.PassengerService;
 
@@ -21,30 +23,38 @@ import java.util.stream.Collectors;
 public class PassengerServiceImpl implements PassengerService {
 
     private final PassengerRepository passengerRepository;
+    private final FinancialDataRepository financialDataRepository;
+
     private final DtoMapper mapper;
 
     @Override
     public PassengerResponseDto createPassenger(PassengerRequestDto passengerRequestDto) {
-        Passenger passenger = mapper.convertToEntity(passengerRequestDto, Passenger.class);
+        Passenger passenger = mapper.convertToPassengerEntity(passengerRequestDto);
         passenger.setAverageRating(0.0);
         passenger.setRatingCount(0);
-        passenger.setBalance(0.0);
         Passenger savedPassenger = passengerRepository.save(passenger);
-        return mapper.convertToDto(savedPassenger, PassengerResponseDto.class);
+
+        // Добавьте проверку и сохранение данных в financialDataRepository
+        if (savedPassenger.getFinancialData() != null) {
+            financialDataRepository.save(savedPassenger.getFinancialData());
+        }
+
+        return mapper.convertToPassengerDto(savedPassenger);
     }
+
 
     @Override
     public PassengerResponseDto getPassengerById(Long id) {
         Passenger passenger = passengerRepository.findById(id)
-                .orElseThrow(() -> new PassengerNotFoundException(String.format("Passenger not found with id: " + id)));
-        return mapper.convertToDto(passenger, PassengerResponseDto.class);
+                .orElseThrow(() -> new PassengerNotFoundException("Passenger not found with id: " + id));
+        return mapper.convertToPassengerDto(passenger);
     }
 
     @Override
     public PassengerListResponseDto getAllPassengers() {
         List<Passenger> passengers = passengerRepository.findAll();
         List<PassengerResponseDto> passengerResponseDtos = passengers.stream()
-                .map(passenger -> mapper.convertToDto(passenger, PassengerResponseDto.class))
+                .map(mapper::convertToPassengerDto)
                 .toList();
 
         return PassengerListResponseDto.builder()
@@ -55,20 +65,32 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public PassengerResponseDto updatePassenger(Long id, PassengerRequestDto passengerRequestDto) {
         Passenger existingPassenger = passengerRepository.findById(id)
-                .orElseThrow(() -> new PassengerNotFoundException(String.format("Passenger not found with id: " + id)));
+                .orElseThrow(() -> new PassengerNotFoundException("Passenger not found with id: " + id));
 
         existingPassenger.setFirstName(passengerRequestDto.getFirstName());
         existingPassenger.setLastName(passengerRequestDto.getLastName());
         existingPassenger.setEmail(passengerRequestDto.getEmail());
         existingPassenger.setPhoneNumber(passengerRequestDto.getPhoneNumber());
-        existingPassenger.setBalance(passengerRequestDto.getBalance());
-        existingPassenger.setCardNumber(passengerRequestDto.getCardNumber());
-        existingPassenger.setCardExpiryDate(passengerRequestDto.getCardExpiryDate());
-        existingPassenger.setCardCvv(passengerRequestDto.getCardCvv());
 
+        // Обновление или создание финансовых данных
+        if (existingPassenger.getFinancialData() != null) {
+            FinancialData financialData = existingPassenger.getFinancialData();
+            financialData.setBalance(passengerRequestDto.getBalance());
+            financialData.setCardNumber(passengerRequestDto.getCardNumber());
+            financialData.setCardExpiryDate(passengerRequestDto.getCardExpiryDate());
+            financialData.setCardCvv(passengerRequestDto.getCardCvv());
+        } else {
+            FinancialData financialData = new FinancialData(null, existingPassenger, passengerRequestDto.getBalance(), passengerRequestDto.getCardNumber(), passengerRequestDto.getCardExpiryDate(), passengerRequestDto.getCardCvv());
+            existingPassenger.setFinancialData(financialData);
+        }
+
+        // Сохраняем пассажира и финансовые данные
         Passenger updatedPassenger = passengerRepository.save(existingPassenger);
-        return mapper.convertToDto(updatedPassenger, PassengerResponseDto.class);
+        financialDataRepository.save(existingPassenger.getFinancialData());
+
+        return mapper.convertToPassengerDto(updatedPassenger);
     }
+
 
     @Override
     public void deletePassenger(Long id) {

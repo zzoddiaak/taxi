@@ -2,6 +2,12 @@ package passenger_service.passenger_service.config.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import passenger_service.passenger_service.dto.PassengerRequestDto;
+import passenger_service.passenger_service.dto.PassengerResponseDto;
+import passenger_service.passenger_service.dto.financial.FinancialDataDto;
+import passenger_service.passenger_service.dto.rating.RatingDto;
+import passenger_service.passenger_service.entity.FinancialData;
+import passenger_service.passenger_service.entity.Passenger;
 
 @Component
 public class DtoMapper {
@@ -11,21 +17,41 @@ public class DtoMapper {
     public DtoMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
-    public <D, E> D convertToDto(E entity, Class<D> dtoClass) {
-        if (entity == null) {
+
+    public PassengerResponseDto convertToPassengerDto(Passenger passenger) {
+        if (passenger == null) {
             return null;
         }
 
-        return modelMapper.map(entity, dtoClass);
+        RatingDto ratingDto = new RatingDto(passenger.getAverageRating(), passenger.getRatingCount());
+        FinancialDataDto financialDataDto = null;
 
-    }
-
-    public <D, E> E convertToEntity(D dto, Class<E> entityClass) {
-        if (dto == null) {
-            return null;
+        if (passenger.getFinancialData() != null) {
+            financialDataDto = new FinancialDataDto(
+                    passenger.getFinancialData().getBalance(),
+                    passenger.getFinancialData().getCardNumber(),
+                    passenger.getFinancialData().getCardExpiryDate(),
+                    passenger.getFinancialData().getCardCvv()
+            );
         }
 
-        return modelMapper.map(dto, entityClass);
+        return PassengerResponseDto.builder()
+                .id(passenger.getId())
+                .firstName(passenger.getFirstName())
+                .lastName(passenger.getLastName())
+                .email(passenger.getEmail())
+                .phoneNumber(passenger.getPhoneNumber())
+                .rating(ratingDto)
+                .financialData(financialDataDto)
+                .build();
     }
 
+    public Passenger convertToPassengerEntity(PassengerRequestDto dto) {
+        Passenger passenger = modelMapper.map(dto, Passenger.class);
+        FinancialData financialData = new FinancialData(null, passenger, dto.getBalance(), dto.getCardNumber(), dto.getCardExpiryDate(), dto.getCardCvv());
+        passenger.setFinancialData(financialData);
+        return passenger;
+    }
 }
+
+
