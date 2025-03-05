@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: create-table-passengers
+      id: create-tables-passengers-financial
       author: Daniil
       changes:
         - createTable:
@@ -42,6 +42,24 @@ databaseChangeLog:
                   name: rating_count
                   type: INTEGER
                   defaultValue: 0
+
+        - createTable:
+            tableName: financial_data
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: passenger_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    unique: true
+                    foreignKeyName: fk_financial_passenger
+                    references: passengers(id)
               - column:
                   name: balance
                   type: DOUBLE PRECISION
@@ -57,7 +75,7 @@ databaseChangeLog:
                   type: VARCHAR(3)
 
   - changeSet:
-      id: insert-table-passengers
+      id: insert-passengers-and-financial-data
       author: Daniil
       changes:
         - insert:
@@ -77,13 +95,20 @@ databaseChangeLog:
                   value: '+79161234567'
               - column:
                   name: average_rating
-                  value: 0.0
+                  value: 4.5
               - column:
                   name: rating_count
-                  value: 0
+                  value: 10
+
+        - insert:
+            tableName: financial_data
+            columns:
+              - column:
+                  name: passenger_id
+                  valueComputed: (SELECT id FROM passengers WHERE email='ivan.ivanov@example.com')
               - column:
                   name: balance
-                  value: 0.0
+                  value: 1500.0
               - column:
                   name: card_number
                   value: '4111111111111111'
@@ -93,6 +118,7 @@ databaseChangeLog:
               - column:
                   name: card_cvv
                   value: '123'
+
         - insert:
             tableName: passengers
             columns:
@@ -110,13 +136,20 @@ databaseChangeLog:
                   value: '+79162345678'
               - column:
                   name: average_rating
-                  value: 0.0
+                  value: 4.8
               - column:
                   name: rating_count
-                  value: 0
+                  value: 15
+
+        - insert:
+            tableName: financial_data
+            columns:
+              - column:
+                  name: passenger_id
+                  valueComputed: (SELECT id FROM passengers WHERE email='maria.petrova@example.com')
               - column:
                   name: balance
-                  value: 0.0
+                  value: 2000.0
               - column:
                   name: card_number
                   value: '5555555555554444'
@@ -126,6 +159,7 @@ databaseChangeLog:
               - column:
                   name: card_cvv
                   value: '456'
+
         - insert:
             tableName: passengers
             columns:
@@ -143,13 +177,20 @@ databaseChangeLog:
                   value: '+79163456789'
               - column:
                   name: average_rating
-                  value: 0.0
+                  value: 4.2
               - column:
                   name: rating_count
-                  value: 0
+                  value: 8
+
+        - insert:
+            tableName: financial_data
+            columns:
+              - column:
+                  name: passenger_id
+                  valueComputed: (SELECT id FROM passengers WHERE email='alexey.sidorov@example.com')
               - column:
                   name: balance
-                  value: 0.0
+                  value: 750.0
               - column:
                   name: card_number
                   value: '378282246310005'
@@ -159,6 +200,7 @@ databaseChangeLog:
               - column:
                   name: card_cvv
                   value: '789'
+
         - insert:
             tableName: passengers
             columns:
@@ -176,13 +218,20 @@ databaseChangeLog:
                   value: '+79164567890'
               - column:
                   name: average_rating
-                  value: 0.0
+                  value: 4.7
               - column:
                   name: rating_count
-                  value: 0
+                  value: 12
+
+        - insert:
+            tableName: financial_data
+            columns:
+              - column:
+                  name: passenger_id
+                  valueComputed: (SELECT id FROM passengers WHERE email='elena.kuznetsova@example.com')
               - column:
                   name: balance
-                  value: 0.0
+                  value: 1800.0
               - column:
                   name: card_number
                   value: '6011111111111117'
@@ -192,36 +241,3 @@ databaseChangeLog:
               - column:
                   name: card_cvv
                   value: '321'
-        - insert:
-            tableName: passengers
-            columns:
-              - column:
-                  name: first_name
-                  value: Дмитрий
-              - column:
-                  name: last_name
-                  value: Смирнов
-              - column:
-                  name: email
-                  value: dmitry.smirnov@example.com
-              - column:
-                  name: phone_number
-                  value: '+79165678901'
-              - column:
-                  name: average_rating
-                  value: 0.0
-              - column:
-                  name: rating_count
-                  value: 0
-              - column:
-                  name: balance
-                  value: 0.0
-              - column:
-                  name: card_number
-                  value: '3530111333300000'
-              - column:
-                  name: card_expiry_date
-                  value: '11/27'
-              - column:
-                  name: card_cvv
-                  value: '654'
