@@ -3,6 +3,8 @@ package rides_service.rides_service.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Setter
 @Getter
@@ -27,4 +29,7 @@ public class Route {
 
     @Column(name = "estimated_time", nullable = false)
     private Integer estimatedTime;
+
+    @OneToMany(mappedBy = "route")
+    private List<Ride> rides;
 }

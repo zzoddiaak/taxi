@@ -19,16 +19,10 @@ public class Ride {
     private Long id;
 
     @Column(name = "driver_id", nullable = false)
-    private Long driverId; // Идентификатор водителя из другого микросервиса
+    private Long driverId;
 
     @Column(name = "passenger_id", nullable = false)
-    private Long passengerId; // Идентификатор пассажира из другого микросервиса
-
-    @Column(name = "start_address", nullable = false)
-    private String startAddress;
-
-    @Column(name = "end_address", nullable = false)
-    private String endAddress;
+    private Long passengerId;
 
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
@@ -39,9 +33,8 @@ public class Ride {
     @Column(name = "status", nullable = false)
     private String status;
 
-    @Column(name = "distance", nullable = false)
-    private Float distance;
+    @ManyToOne
+    @JoinColumn(name = "route_id", nullable = false)
+    private Route route;
 
-    @Column(name = "estimated_time", nullable = false)
-    private Integer estimatedTime;
 }

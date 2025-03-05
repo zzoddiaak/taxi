@@ -7,12 +7,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Setter
-@Getter
 @Table(name = "payments")
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Payment {
 
     @Id
@@ -33,4 +33,10 @@ public class Payment {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "promo_code_id")
+    private PromoCode promoCode;
 }
+
+

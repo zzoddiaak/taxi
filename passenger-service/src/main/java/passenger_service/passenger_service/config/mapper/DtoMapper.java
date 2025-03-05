@@ -31,7 +31,8 @@ public class DtoMapper {
                     passenger.getFinancialData().getBalance(),
                     passenger.getFinancialData().getCardNumber(),
                     passenger.getFinancialData().getCardExpiryDate(),
-                    passenger.getFinancialData().getCardCvv()
+                    passenger.getFinancialData().getCardCvv(),
+                    passenger.getFinancialData().getPromo()
             );
         }
 
@@ -43,15 +44,15 @@ public class DtoMapper {
                 .phoneNumber(passenger.getPhoneNumber())
                 .rating(ratingDto)
                 .financialData(financialDataDto)
+                .driverRating(passenger.getDriverRating())
                 .build();
     }
 
     public Passenger convertToPassengerEntity(PassengerRequestDto dto) {
         Passenger passenger = modelMapper.map(dto, Passenger.class);
-        FinancialData financialData = new FinancialData(null, passenger, dto.getBalance(), dto.getCardNumber(), dto.getCardExpiryDate(), dto.getCardCvv());
+        FinancialData financialData = new FinancialData(null, passenger, dto.getBalance(), dto.getCardNumber(), dto.getCardExpiryDate(), dto.getCardCvv(), dto.getPromo());
         passenger.setFinancialData(financialData);
+        passenger.setDriverRating(dto.getDriverRating());
         return passenger;
     }
 }
-
-

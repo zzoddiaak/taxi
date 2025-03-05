@@ -42,6 +42,10 @@ databaseChangeLog:
                   name: rating_count
                   type: INTEGER
                   defaultValue: 0
+              - column:
+                  name: driver_rating  # Добавлено поле для рейтинга водителя
+                  type: DOUBLE PRECISION
+                  defaultValue: 0.0
 
         - createTable:
             tableName: financial_data
@@ -73,6 +77,10 @@ databaseChangeLog:
               - column:
                   name: card_cvv
                   type: VARCHAR(3)
+              - column:
+                  name: promo
+                  type: VARCHAR(50)
+
 
   - changeSet:
       id: insert-passengers-and-financial-data
@@ -99,6 +107,9 @@ databaseChangeLog:
               - column:
                   name: rating_count
                   value: 10
+              - column:
+                  name: driver_rating
+                  value: 4.2  # Пример рейтинга водителя
 
         - insert:
             tableName: financial_data
@@ -140,6 +151,9 @@ databaseChangeLog:
               - column:
                   name: rating_count
                   value: 15
+              - column:
+                  name: driver_rating
+                  value: 4.5  # Пример рейтинга водителя
 
         - insert:
             tableName: financial_data
@@ -181,6 +195,9 @@ databaseChangeLog:
               - column:
                   name: rating_count
                   value: 8
+              - column:
+                  name: driver_rating
+                  value: 4.0  # Пример рейтинга водителя
 
         - insert:
             tableName: financial_data
@@ -222,6 +239,9 @@ databaseChangeLog:
               - column:
                   name: rating_count
                   value: 12
+              - column:
+                  name: driver_rating
+                  value: 4.3  # Пример рейтинга водителя
 
         - insert:
             tableName: financial_data
