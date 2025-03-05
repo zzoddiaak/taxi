@@ -1,4 +1,4 @@
-package payment_service.payment_service.dto;
+package payment_service.payment_service.dto.payment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

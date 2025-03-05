@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import payment_service.payment_service.dto.PaymentListResponseDto;
-import payment_service.payment_service.dto.PaymentRequestDto;
-import payment_service.payment_service.dto.PaymentResponseDto;
+import payment_service.payment_service.dto.payment.PaymentListResponseDto;
+import payment_service.payment_service.dto.payment.PaymentRequestDto;
+import payment_service.payment_service.dto.payment.PaymentResponseDto;
 import payment_service.payment_service.service.api.PaymentService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/payments")

@@ -31,5 +31,9 @@ public class FinancialData {
 
     @Column(name = "card_cvv")
     private String cardCvv;
+
+    @Column(name = "promo")
+    private String promo;
 }
+
 

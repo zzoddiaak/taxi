@@ -1,4 +1,4 @@
-package payment_service.payment_service.dto;
+package payment_service.payment_service.dto.payment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,4 +17,6 @@ public class PaymentRequestDto {
     private BigDecimal amount;
     private String paymentMethod;
     private String status;
+    private String promoCode;
 }
+

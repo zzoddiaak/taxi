@@ -19,4 +19,5 @@ public class PassengerResponseDto {
     private String phoneNumber;
     private RatingDto rating;
     private FinancialDataDto financialData;
+    private Double driverRating;
 }

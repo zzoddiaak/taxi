@@ -19,4 +19,6 @@ public class PassengerRequestDto {
     private String cardNumber;
     private String cardExpiryDate;
     private String cardCvv;
+    private String promo;
+    private Double driverRating;
 }

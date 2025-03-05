@@ -23,16 +23,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: start_address
-                  type: VARCHAR(255)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: end_address
-                  type: VARCHAR(255)
-                  constraints:
-                    nullable: false
-              - column:
                   name: start_time
                   type: TIMESTAMP
                   constraints:
@@ -46,15 +36,16 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: distance
-                  type: FLOAT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: estimated_time
+                  name: route_id
                   type: INT
                   constraints:
                     nullable: false
+              - addForeignKeyConstraint:
+                  baseTableName: rides
+                  baseColumnNames: route_id
+                  referencedTableName: routes
+                  referencedColumnNames: id
+                  constraintName: fk_route_id
 
   - changeSet:
       id: create-table-routes
@@ -154,12 +145,6 @@ databaseChangeLog:
                   name: passenger_id
                   value: 1
               - column:
-                  name: start_address
-                  value: 'ул. Ленина, 10'
-              - column:
-                  name: end_address
-                  value: 'ул. Пушкина, 25'
-              - column:
                   name: start_time
                   value: '2023-10-01 08:00:00'
               - column:
@@ -169,8 +154,5 @@ databaseChangeLog:
                   name: status
                   value: 'Завершено'
               - column:
-                  name: distance
-                  value: 5.3
-              - column:
-                  name: estimated_time
-                  value: 15
+                  name: route_id
+                  value: 1

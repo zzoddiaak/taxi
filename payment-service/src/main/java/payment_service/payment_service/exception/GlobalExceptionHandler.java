@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import payment_service.payment_service.exception.payment.PaymentNotFoundException;
+import payment_service.payment_service.exception.promo.PromoCodeExpiredException;
+import payment_service.payment_service.exception.promo.PromoCodeNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -14,7 +16,9 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(PaymentNotFoundException.class)
+    @ExceptionHandler({PaymentNotFoundException.class,
+            PromoCodeExpiredException.class,
+            PromoCodeNotFoundException.class})
     public ResponseEntity<Object> handleRatingNotFoundException(
             PaymentNotFoundException ex, WebRequest request) {
 
