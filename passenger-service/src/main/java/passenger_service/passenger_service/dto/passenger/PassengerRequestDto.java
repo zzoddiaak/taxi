@@ -1,9 +1,11 @@
-package passenger_service.passenger_service.dto;
+package passenger_service.passenger_service.dto.passenger;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Data
 @Builder

@@ -1,15 +1,14 @@
 package passenger_service.passenger_service.controller;
 
 import lombok.RequiredArgsConstructor;
-import passenger_service.passenger_service.dto.PassengerListResponseDto;
-import passenger_service.passenger_service.dto.PassengerRequestDto;
-import passenger_service.passenger_service.dto.PassengerResponseDto;
+import passenger_service.passenger_service.dto.passenger.PassengerListResponseDto;
+import passenger_service.passenger_service.dto.passenger.PassengerRequestDto;
+import passenger_service.passenger_service.dto.passenger.PassengerResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import passenger_service.passenger_service.dto.rating.RatingUpdateDto;
 import passenger_service.passenger_service.service.api.PassengerService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/passengers")
@@ -17,6 +16,12 @@ import java.util.List;
 public class PassengerController {
 
     private final PassengerService passengerService;
+
+    @PutMapping("/{id}/rating")
+    public ResponseEntity<Void> updatePassengerRating(@PathVariable Long id, @RequestBody RatingUpdateDto ratingUpdateDto) {
+        passengerService.updatePassengerRating(id, ratingUpdateDto.getRating());
+        return ResponseEntity.ok().build();
+    }
 
     @PostMapping
     public ResponseEntity<PassengerResponseDto> createPassenger(@RequestBody PassengerRequestDto passengerRequestDto) {

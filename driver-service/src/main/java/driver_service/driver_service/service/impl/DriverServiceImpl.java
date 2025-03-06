@@ -103,4 +103,20 @@ public class DriverServiceImpl implements DriverService {
                 .orElseThrow(() -> new DriverNotFoundException(String.format("Driver not found with id: " + id)));
         driverRepository.delete(driver);
     }
+
+    @Override
+    public void updateDriverRating(Long id, Float rating) {
+        Driver driver = driverRepository.findById(id)
+                .orElseThrow(() -> new DriverNotFoundException("Driver not found with id: " + id));
+
+        Double currentRating = driver.getAverageRating();
+        Integer ratingCount = driver.getRatingCount();
+
+        Double newRating = ((currentRating * ratingCount) + rating) / (ratingCount + 1);
+
+        driver.setAverageRating(newRating);
+        driver.setRatingCount(ratingCount + 1);
+
+        driverRepository.save(driver);
+    }
 }

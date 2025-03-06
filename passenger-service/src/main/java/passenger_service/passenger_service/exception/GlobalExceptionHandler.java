@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import passenger_service.passenger_service.exception.passenger.FinancialDataNotFoundException;
 import passenger_service.passenger_service.exception.passenger.PassengerNotFoundException;
 
 import java.time.LocalDateTime;
@@ -14,7 +15,8 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(PassengerNotFoundException.class)
+    @ExceptionHandler({PassengerNotFoundException.class,
+            FinancialDataNotFoundException.class})
     public ResponseEntity<Object> handlePassengerNotFoundException(
             PassengerNotFoundException ex, WebRequest request) {
 
