@@ -3,6 +3,7 @@ package rides_service.rides_service.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,5 +37,8 @@ public class Ride {
     @ManyToOne
     @JoinColumn(name = "route_id", nullable = false)
     private Route route;
+
+    @Column(name = "price_id", nullable = false)
+    private BigDecimal price;
 
 }

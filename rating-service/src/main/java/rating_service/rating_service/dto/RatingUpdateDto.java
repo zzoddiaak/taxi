@@ -9,10 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RatingRequestDto {
-
-    private Long driverId;
-    private Long passengerId;
+public class RatingUpdateDto {
     private Float rating;
-    private String comment;
 }

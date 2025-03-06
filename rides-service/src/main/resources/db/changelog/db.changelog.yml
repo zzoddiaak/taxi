@@ -40,6 +40,11 @@ databaseChangeLog:
                   type: INT
                   constraints:
                     nullable: false
+              - column:
+                  name: price_id
+                  type: DECIMAL(10, 2)
+                  constraints:
+                    nullable: false
               - addForeignKeyConstraint:
                   baseTableName: rides
                   baseColumnNames: route_id
@@ -131,6 +136,7 @@ databaseChangeLog:
                   name: estimated_time
                   value: 10
 
+
   - changeSet:
       id: insert-table-rides
       author: Daniil
@@ -156,3 +162,7 @@ databaseChangeLog:
               - column:
                   name: route_id
                   value: 1
+              - column:
+                  name: price_id
+                  value: 1
+
