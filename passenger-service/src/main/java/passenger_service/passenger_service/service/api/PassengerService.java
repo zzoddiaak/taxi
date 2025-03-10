@@ -12,5 +12,6 @@ public interface PassengerService {
     PassengerResponseDto updatePassenger(Long id, PassengerRequestDto passengerRequestDto);
     void deletePassenger(Long id);
     void updatePassengerRating(Long id, Float rating);
+    void updatePassengerBalance(Long id, Double amount);
 
 }

@@ -4,13 +4,16 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import payment_service.payment_service.config.mapper.DtoMapper;
+import payment_service.payment_service.dto.passenger.BalanceUpdateDto;
 import payment_service.payment_service.dto.payment.PaymentListResponseDto;
 import payment_service.payment_service.dto.payment.PaymentRequestDto;
 import payment_service.payment_service.dto.payment.PaymentResponseDto;
 import payment_service.payment_service.entity.Payment;
 import payment_service.payment_service.entity.PromoCode;
 import payment_service.payment_service.exception.payment.PaymentNotFoundException;
+import payment_service.payment_service.exception.payment.PaymentProcessingException;
 import payment_service.payment_service.repository.PaymentRepository;
+import payment_service.payment_service.service.api.PassengerServiceClient;
 import payment_service.payment_service.service.api.PaymentService;
 
 import java.math.BigDecimal;
@@ -25,38 +28,69 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final PromoCodeService promoCodeService;
+    private final PassengerServiceClient passengerServiceClient;
     private final DtoMapper mapper;
+
+    @Override
+    public void updatePaymentStatus(Long id, String status) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new PaymentNotFoundException(String.format("Payment not found with id: " + id)));
+
+        if (!"cash".equalsIgnoreCase(payment.getPaymentMethod())) {
+            throw new IllegalArgumentException(String.format("Payment status can only be updated for cash payments"));
+        }
+
+        payment.setStatus(status);
+        paymentRepository.save(payment);
+    }
+
+    @Override
+    public PaymentResponseDto getPaymentByRideId(Long rideId){
+        Payment payment = paymentRepository.findByRideId(rideId)
+                .orElseThrow(() -> new PaymentNotFoundException(String.format("Payment not found for ride id: " + rideId)));
+        return mapper.convertToDto(payment, PaymentResponseDto.class);
+    }
 
     @Override
     public PaymentResponseDto createPayment(PaymentRequestDto paymentRequestDto) {
         PromoCode promoCode = null;
+        BigDecimal finalAmount = paymentRequestDto.getAmount();
+
         if (paymentRequestDto.getPromoCode() != null) {
             promoCode = promoCodeService.getPromoCodeByCode(paymentRequestDto.getPromoCode());
+            finalAmount = promoCodeService.applyDiscount(paymentRequestDto.getAmount(), paymentRequestDto.getPromoCode());
         }
 
         Payment payment = Payment.builder()
                 .rideId(paymentRequestDto.getRideId())
-                .amount(paymentRequestDto.getAmount())
+                .passengerId(paymentRequestDto.getPassengerId())
+                .amount(finalAmount)
                 .paymentMethod(paymentRequestDto.getPaymentMethod())
-                .status(paymentRequestDto.getStatus())
+                .status("pending")
                 .createdAt(LocalDateTime.now())
                 .promoCode(promoCode)
                 .build();
 
-        if (promoCode != null) {
-            BigDecimal discountedAmount = promoCodeService.applyDiscount(paymentRequestDto.getAmount(), paymentRequestDto.getPromoCode());
-            payment.setAmount(discountedAmount);
+        if (!"cash".equalsIgnoreCase(paymentRequestDto.getPaymentMethod())) {
+            try {
+                passengerServiceClient.updatePassengerBalance(
+                        paymentRequestDto.getPassengerId(),
+                        new BalanceUpdateDto(finalAmount.doubleValue())
+                );
+                payment.setStatus("complete");
+            } catch (Exception e) {
+                throw new PaymentProcessingException(String.format("Failed to update passenger balance: " + e.getMessage()));
+            }
         }
 
         Payment savedPayment = paymentRepository.save(payment);
-
         return mapper.convertToDto(savedPayment, PaymentResponseDto.class);
     }
 
     @Override
     public PaymentResponseDto getPaymentById(Long id) {
         Payment payment = paymentRepository.findById(id)
-                .orElseThrow(() -> new PaymentNotFoundException("Payment not found"));
+                .orElseThrow(() -> new PaymentNotFoundException(String.format("Payment not found")));
 
         return mapper.convertToDto(payment, PaymentResponseDto.class);
     }
@@ -74,7 +108,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponseDto updatePayment(Long id, PaymentRequestDto paymentRequestDto) {
         Payment existingPayment = paymentRepository.findById(id)
-                .orElseThrow(() -> new PaymentNotFoundException("Payment not found"));
+                .orElseThrow(() -> new PaymentNotFoundException(String.format("Payment not found")));
 
         existingPayment.setRideId(paymentRequestDto.getRideId());
         existingPayment.setAmount(paymentRequestDto.getAmount());
@@ -95,8 +129,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void deletePayment(Long id) {
         Payment payment = paymentRepository.findById(id)
-                .orElseThrow(() -> new PaymentNotFoundException("Payment not found"));
+                .orElseThrow(() -> new PaymentNotFoundException(String.format("Payment not found")));
         paymentRepository.delete(payment);
     }
-}
 
+}

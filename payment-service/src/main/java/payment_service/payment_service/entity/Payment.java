@@ -22,6 +22,9 @@ public class Payment {
     @Column(name = "ride_id", nullable = false)
     private Long rideId;
 
+    @Column(name = "passenger_id", nullable = false)
+    private Long passengerId;
+
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 

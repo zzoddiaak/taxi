@@ -39,6 +39,6 @@ public class Ride {
     private Route route;
 
     @Column(name = "price_id", nullable = false)
-    private BigDecimal price;
+    private BigDecimal amount;
 
 }

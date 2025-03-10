@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import rides_service.rides_service.dto.driver.DriverResponseDto;
 import rides_service.rides_service.dto.passenger.PassengerResponseDto;
+import rides_service.rides_service.dto.payment.PaymentResponseDto;
 import rides_service.rides_service.dto.route.RouteResponseDto;
 
 import java.math.BigDecimal;
@@ -23,5 +24,5 @@ public class RideResponseDto {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String status;
-    private BigDecimal price;
+    private PaymentResponseDto amount;
 }

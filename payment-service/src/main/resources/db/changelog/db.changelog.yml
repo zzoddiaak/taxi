@@ -74,6 +74,11 @@ databaseChangeLog:
                   type: BIGINT
                   constraints:
                     nullable: true
+              - column:
+                  name: passenger_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
         - addForeignKeyConstraint:
             baseTableName: payments
             baseColumnNames: promo_code_id
@@ -99,6 +104,9 @@ databaseChangeLog:
               - column:
                   name: status
                   value: "completed"
+              - column:
+                  name: passenger_id
+                  value: 1
         - insert:
             tableName: payments
             columns:
@@ -114,6 +122,9 @@ databaseChangeLog:
               - column:
                   name: status
                   value: "pending"
+              - column:
+                  name: passenger_id
+                  value: 2
         - insert:
             tableName: payments
             columns:
@@ -129,6 +140,9 @@ databaseChangeLog:
               - column:
                   name: status
                   value: "completed"
+              - column:
+                  name: passenger_id
+                  value: 3
         - insert:
             tableName: payments
             columns:
@@ -143,7 +157,10 @@ databaseChangeLog:
                   value: "cash"
               - column:
                   name: status
-                  value: "failed"
+                  value: "completed"
+              - column:
+                  name: passenger_id
+                  value: 4
         - insert:
             tableName: payments
             columns:
@@ -159,3 +176,70 @@ databaseChangeLog:
               - column:
                   name: status
                   value: "completed"
+              - column:
+                  name: passenger_id
+                  value: 5
+  - changeSet:
+      id: insert-test-promo-codes
+      author: Daniil
+      changes:
+        - insert:
+            tableName: promo_codes
+            columns:
+              - column:
+                  name: code
+                  value: "SUMMER2023"
+              - column:
+                  name: discount_percentage
+                  value: 10.00
+              - column:
+                  name: expiration_date
+                  value: "2023-12-31T23:59:59"
+        - insert:
+            tableName: promo_codes
+            columns:
+              - column:
+                  name: code
+                  value: "WINTER2023"
+              - column:
+                  name: discount_percentage
+                  value: 15.00
+              - column:
+                  name: expiration_date
+                  value: "2023-12-31T23:59:59"
+        - insert:
+            tableName: promo_codes
+            columns:
+              - column:
+                  name: code
+                  value: "SPRING2023"
+              - column:
+                  name: discount_percentage
+                  value: 20.00
+              - column:
+                  name: expiration_date
+                  value: "2023-12-31T23:59:59"
+        - insert:
+            tableName: promo_codes
+            columns:
+              - column:
+                  name: code
+                  value: "AUTUMN2023"
+              - column:
+                  name: discount_percentage
+                  value: 25.00
+              - column:
+                  name: expiration_date
+                  value: "2023-12-31T23:59:59"
+        - insert:
+            tableName: promo_codes
+            columns:
+              - column:
+                  name: code
+                  value: "NEWYEAR2024"
+              - column:
+                  name: discount_percentage
+                  value: 30.00
+              - column:
+                  name: expiration_date
+                  value: "2024-01-31T23:59:59"
