@@ -7,6 +7,7 @@ import driver_service.driver_service.dto.payment.PaymentStatusUpdateDto;
 import driver_service.driver_service.dto.rating.RatingUpdateDto;
 import driver_service.driver_service.service.api.DriverService;
 import driver_service.driver_service.service.api.PaymentServiceClient;
+import driver_service.driver_service.service.kafka.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,25 @@ public class DriverController {
 
     private final DriverService service;
     private final PaymentServiceClient paymentServiceClient;
+    private final KafkaProducerService kafkaProducerService;
+
+    @PostMapping("/{driverId}/start-ride/{rideId}")
+    public ResponseEntity<Void> startRide(@PathVariable Long driverId, @PathVariable Long rideId) {
+        kafkaProducerService.sendRideStart(rideId.toString());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{driverId}/end-ride/{rideId}")
+    public ResponseEntity<Void> endRide(@PathVariable Long driverId, @PathVariable Long rideId) {
+        kafkaProducerService.sendRideEnd(rideId.toString());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{driverId}/accept-ride/{rideId}")
+    public ResponseEntity<Void> acceptRide(@PathVariable Long driverId, @PathVariable Long rideId, @RequestParam boolean accepted) {
+        kafkaProducerService.sendRideAcceptance(rideId.toString(), driverId.toString(), accepted);
+        return ResponseEntity.ok().build();
+    }
 
     @PutMapping("/payments/{paymentId}/status")
     public ResponseEntity<Void> updatePaymentStatus(@PathVariable Long paymentId, @RequestBody PaymentStatusUpdateDto paymentStatusUpdateDto) {

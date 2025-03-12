@@ -25,7 +25,7 @@ public class Ride {
     @Column(name = "passenger_id", nullable = false)
     private Long passengerId;
 
-    @Column(name = "start_time", nullable = false)
+    @Column(name = "start_time")
     private LocalDateTime startTime;
 
     @Column(name = "end_time")

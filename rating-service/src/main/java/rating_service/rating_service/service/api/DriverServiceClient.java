@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import rating_service.rating_service.dto.RatingUpdateDto;
 
-@FeignClient(name = "driver-service", url = "http://localhost:8080/api/v1/drivers")
+@FeignClient(name = "driver-service", url = "http://driver-service:8085/api/v1/drivers")
 public interface DriverServiceClient {
 
     @PutMapping("/{id}/rating")

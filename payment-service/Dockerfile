@@ -1,0 +1,9 @@
+FROM eclipse-temurin:17 AS runtime
+
+WORKDIR /app
+
+COPY target/payment-service-0.0.1-SNAPSHOT.jar payment-service.jar
+
+EXPOSE 8082
+
+ENTRYPOINT ["java", "-jar", "payment-service.jar"]
