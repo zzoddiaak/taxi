@@ -1,6 +1,7 @@
 package passenger_service.passenger_service.controller;
 
 import lombok.RequiredArgsConstructor;
+import passenger_service.passenger_service.dto.financial.BalanceUpdateDto;
 import passenger_service.passenger_service.dto.passenger.PassengerListResponseDto;
 import passenger_service.passenger_service.dto.passenger.PassengerRequestDto;
 import passenger_service.passenger_service.dto.passenger.PassengerResponseDto;
@@ -16,6 +17,12 @@ import passenger_service.passenger_service.service.api.PassengerService;
 public class PassengerController {
 
     private final PassengerService passengerService;
+
+    @PutMapping("/{id}/balance")
+    public ResponseEntity<Void> updatePassengerBalance(@PathVariable Long id, @RequestBody BalanceUpdateDto balanceUpdateDto) {
+        passengerService.updatePassengerBalance(id, balanceUpdateDto.getAmount());
+        return ResponseEntity.ok().build();
+    }
 
     @PutMapping("/{id}/rating")
     public ResponseEntity<Void> updatePassengerRating(@PathVariable Long id, @RequestBody RatingUpdateDto ratingUpdateDto) {

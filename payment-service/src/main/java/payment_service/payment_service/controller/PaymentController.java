@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import payment_service.payment_service.dto.payment.PaymentListResponseDto;
 import payment_service.payment_service.dto.payment.PaymentRequestDto;
 import payment_service.payment_service.dto.payment.PaymentResponseDto;
+import payment_service.payment_service.dto.payment.PaymentStatusUpdateDto;
 import payment_service.payment_service.service.api.PaymentService;
 
 @RestController
@@ -16,6 +17,17 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Void> updatePaymentStatus(@PathVariable Long id, @RequestBody PaymentStatusUpdateDto paymentStatusUpdateDto) {
+        paymentService.updatePaymentStatus(id, paymentStatusUpdateDto.getStatus());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/ride/{rideId}")
+    public ResponseEntity<PaymentResponseDto> getPaymentByRideId(@PathVariable Long rideId) {
+        PaymentResponseDto paymentResponseDto = paymentService.getPaymentByRideId(rideId);
+        return ResponseEntity.ok(paymentResponseDto);
+    }
     @PostMapping
     public ResponseEntity<PaymentResponseDto> createPayment(@RequestBody PaymentRequestDto paymentRequestDto) {
         PaymentResponseDto paymentResponseDto = paymentService.createPayment(paymentRequestDto);

@@ -9,5 +9,7 @@ public interface PaymentService {
     PaymentResponseDto getPaymentById(Long id);
     PaymentListResponseDto getAllPayments();
     PaymentResponseDto updatePayment(Long id, PaymentRequestDto paymentRequestDto);
+    PaymentResponseDto getPaymentByRideId(Long rideId);
     void deletePayment(Long id);
+    void updatePaymentStatus(Long id, String status);
 }

@@ -10,6 +10,7 @@ import passenger_service.passenger_service.dto.passenger.PassengerResponseDto;
 import passenger_service.passenger_service.entity.FinancialData;
 import passenger_service.passenger_service.entity.Passenger;
 import passenger_service.passenger_service.exception.passenger.FinancialDataNotFoundException;
+import passenger_service.passenger_service.exception.passenger.InsufficientBalanceException;
 import passenger_service.passenger_service.exception.passenger.PassengerNotFoundException;
 import passenger_service.passenger_service.repository.FinancialDataRepository;
 import passenger_service.passenger_service.repository.PassengerRepository;
@@ -111,5 +112,25 @@ public class PassengerServiceImpl implements PassengerService {
         Passenger passenger = passengerRepository.findById(id)
                 .orElseThrow(() -> new PassengerNotFoundException(String.format("Passenger not found with id: " + id)));
         passengerRepository.delete(passenger);
+    }
+
+    @Override
+    public void updatePassengerBalance(Long id, Double amount) {
+        Passenger passenger = passengerRepository.findById(id)
+                .orElseThrow(() -> new PassengerNotFoundException("Passenger not found with id: " + id));
+
+        FinancialData financialData = passenger.getFinancialData();
+        if (financialData == null) {
+            throw new FinancialDataNotFoundException("Financial data not found for passenger id: " + id);
+        }
+
+        // Проверка достаточности баланса
+        if (financialData.getBalance() < amount) {
+            throw new InsufficientBalanceException("Insufficient balance for passenger id: " + id);
+        }
+
+        // Списание средств
+        financialData.setBalance(financialData.getBalance() - amount);
+        financialDataRepository.save(financialData);
     }
 }

@@ -1,4 +1,4 @@
-package rides_service.rides_service.dto.ride;
+package rides_service.rides_service.dto.payment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,20 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RideRequestDto {
-    private Long driverId;
+public class PaymentRequestDto {
+    private Long rideId;
     private Long passengerId;
-    private Long routeId;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private BigDecimal amount;
+    private String paymentMethod;
     private String status;
     private String promoCode;
-    private String paymentMethod;
-
 }

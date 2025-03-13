@@ -3,8 +3,10 @@ package driver_service.driver_service.controller;
 import driver_service.driver_service.dto.driver.DriverListResponseDto;
 import driver_service.driver_service.dto.driver.DriverRequestDto;
 import driver_service.driver_service.dto.driver.DriverResponseDto;
+import driver_service.driver_service.dto.payment.PaymentStatusUpdateDto;
 import driver_service.driver_service.dto.rating.RatingUpdateDto;
 import driver_service.driver_service.service.api.DriverService;
+import driver_service.driver_service.service.api.PaymentServiceClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,13 @@ import org.springframework.web.bind.annotation.*;
 public class DriverController {
 
     private final DriverService service;
+    private final PaymentServiceClient paymentServiceClient;
+
+    @PutMapping("/payments/{paymentId}/status")
+    public ResponseEntity<Void> updatePaymentStatus(@PathVariable Long paymentId, @RequestBody PaymentStatusUpdateDto paymentStatusUpdateDto) {
+        paymentServiceClient.updatePaymentStatus(paymentId, paymentStatusUpdateDto);
+        return ResponseEntity.ok().build();
+    }
 
     @PutMapping("/{id}/rating")
     public ResponseEntity<Void> updateDriverRating(@PathVariable Long id, @RequestBody RatingUpdateDto ratingUpdateDto) {
