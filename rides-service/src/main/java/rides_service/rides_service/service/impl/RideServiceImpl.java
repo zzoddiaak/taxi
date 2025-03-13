@@ -72,7 +72,7 @@ public class RideServiceImpl implements RideService {
     @Override
     public RideResponseDto getRideById(Long id) {
         Ride ride = rideRepository.findById(id)
-                .orElseThrow(() -> new RideNotFoundException("Ride not found with id: " + id));
+                .orElseThrow(() -> new RideNotFoundException(String.format("Ride not found with id: " + id)));
 
         DriverResponseDto driverResponseDto = driverServiceClient.getDriverById(ride.getDriverId());
         PassengerResponseDto passengerResponseDto = passengerServiceClient.getPassengerById(ride.getPassengerId());
@@ -90,7 +90,7 @@ public class RideServiceImpl implements RideService {
     @Override
     public RideResponseDto updateRide(Long id, RideRequestDto rideRequestDto) {
         Ride existingRide = rideRepository.findById(id)
-                .orElseThrow(() -> new RideNotFoundException("Ride not found with id: " + id));
+                .orElseThrow(() -> new RideNotFoundException(String.format("Ride not found with id: " + id)));
 
         Route route = routeRepository.findById(rideRequestDto.getRouteId())
                 .orElseThrow(() -> new RouteNotFoundException("Route not found"));
@@ -122,7 +122,7 @@ public class RideServiceImpl implements RideService {
     @Override
     public RideResponseDto createRide(RideRequestDto rideRequestDto) {
         Route route = routeRepository.findById(rideRequestDto.getRouteId())
-                .orElseThrow(() -> new RouteNotFoundException("Route not found"));
+                .orElseThrow(() -> new RouteNotFoundException(String.format("Route not found")));
 
         BigDecimal amount = calculateRideCost(route.getDistance());
 
@@ -159,7 +159,7 @@ public class RideServiceImpl implements RideService {
     @Override
     public void updateRideStatus(Long rideId, String status) {
         Ride ride = rideRepository.findById(rideId)
-                .orElseThrow(() -> new RideNotFoundException("Ride not found with id: " + rideId));
+                .orElseThrow(() -> new RideNotFoundException(String.format("Ride not found with id: " + rideId)));
 
         if ("ACCEPTED".equals(status)) {
             ride.setStatus("ACCEPTED");
@@ -184,7 +184,7 @@ public class RideServiceImpl implements RideService {
     @Override
     public void deleteRide(Long id) {
         Ride ride = rideRepository.findById(id)
-                .orElseThrow(() -> new RideNotFoundException("Ride not found with id: " + id));
+                .orElseThrow(() -> new RideNotFoundException(String.format("Ride not found with id: " + id)));
         rideRepository.delete(ride);
     }
 }

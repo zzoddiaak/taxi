@@ -31,7 +31,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public void updatePassengerRating(Long id, Float rating) {
         Passenger passenger = passengerRepository.findById(id)
-                .orElseThrow(() -> new PassengerNotFoundException("Passenger not found with id: " + id));
+                .orElseThrow(() -> new PassengerNotFoundException(String.format("Passenger not found with id: " + id)));
 
         Double currentRating = passenger.getAverageRating();
         Integer ratingCount = passenger.getRatingCount();
@@ -62,7 +62,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public PassengerResponseDto updatePassenger(Long id, PassengerRequestDto passengerRequestDto) {
         Passenger existingPassenger = passengerRepository.findById(id)
-                .orElseThrow(() -> new PassengerNotFoundException("Passenger not found with id: " + id));
+                .orElseThrow(() -> new PassengerNotFoundException(String.format("Passenger not found with id: " + id)));
 
         existingPassenger.setFirstName(passengerRequestDto.getFirstName());
         existingPassenger.setLastName(passengerRequestDto.getLastName());
@@ -91,7 +91,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public PassengerResponseDto getPassengerById(Long id) {
         Passenger passenger = passengerRepository.findById(id)
-                .orElseThrow(() -> new PassengerNotFoundException("Passenger not found with id: " + id));
+                .orElseThrow(() -> new PassengerNotFoundException(String.format("Passenger not found with id: " + id)));
         return mapper.convertToPassengerDto(passenger);
     }
 
@@ -117,19 +117,17 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public void updatePassengerBalance(Long id, Double amount) {
         Passenger passenger = passengerRepository.findById(id)
-                .orElseThrow(() -> new PassengerNotFoundException("Passenger not found with id: " + id));
+                .orElseThrow(() -> new PassengerNotFoundException(String.format("Passenger not found with id: " + id)));
 
         FinancialData financialData = passenger.getFinancialData();
         if (financialData == null) {
-            throw new FinancialDataNotFoundException("Financial data not found for passenger id: " + id);
+            throw new FinancialDataNotFoundException(String.format("Financial data not found for passenger id: " + id));
         }
 
-        // Проверка достаточности баланса
         if (financialData.getBalance() < amount) {
-            throw new InsufficientBalanceException("Insufficient balance for passenger id: " + id);
+            throw new InsufficientBalanceException(String.format("Insufficient balance for passenger id: " + id));
         }
 
-        // Списание средств
         financialData.setBalance(financialData.getBalance() - amount);
         financialDataRepository.save(financialData);
     }
