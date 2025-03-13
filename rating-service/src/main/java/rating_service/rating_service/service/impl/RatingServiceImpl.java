@@ -35,15 +35,19 @@ public class RatingServiceImpl implements RatingService {
         rating.setCreatedAt(LocalDateTime.now());
         Rating savedRating = ratingRepository.save(rating);
 
-        driverServiceClient.updateDriverRating(
-                ratingRequestDto.getDriverId(),
-                new RatingUpdateDto(ratingRequestDto.getRating())
-        );
+        if (ratingRequestDto.getDriverId() != null) {
+            driverServiceClient.updateDriverRating(
+                    ratingRequestDto.getDriverId(),
+                    new RatingUpdateDto(ratingRequestDto.getRating())
+            );
+        }
 
-        passengerServiceClient.updatePassengerRating(
-                ratingRequestDto.getPassengerId(),
-                new RatingUpdateDto(ratingRequestDto.getRating())
-        );
+        if (ratingRequestDto.getPassengerId() != null) {
+            passengerServiceClient.updatePassengerRating(
+                    ratingRequestDto.getPassengerId(),
+                    new RatingUpdateDto(ratingRequestDto.getRating())
+            );
+        }
 
         return mapper.convertToDto(savedRating, RatingResponseDto.class);
     }

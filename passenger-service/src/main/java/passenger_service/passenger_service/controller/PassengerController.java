@@ -8,8 +8,10 @@ import passenger_service.passenger_service.dto.passenger.PassengerResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import passenger_service.passenger_service.dto.rating.PassengerRatingRequestDto;
 import passenger_service.passenger_service.dto.rating.RatingUpdateDto;
 import passenger_service.passenger_service.service.api.PassengerService;
+import passenger_service.passenger_service.service.kafka.KafkaProducerService;
 
 @RestController
 @RequestMapping("/api/passengers")
@@ -17,6 +19,17 @@ import passenger_service.passenger_service.service.api.PassengerService;
 public class PassengerController {
 
     private final PassengerService passengerService;
+    private final KafkaProducerService kafkaProducerService;
+
+    @PostMapping("/{passengerId}/rate-driver/{driverId}")
+    public ResponseEntity<Void> rateDriver(
+            @PathVariable Long passengerId,
+            @PathVariable Long driverId,
+            @RequestParam Float rating) {
+
+        kafkaProducerService.rateDriver(passengerId, driverId, rating);
+        return ResponseEntity.ok().build();
+    }
 
     @PutMapping("/{id}/balance")
     public ResponseEntity<Void> updatePassengerBalance(@PathVariable Long id, @RequestBody BalanceUpdateDto balanceUpdateDto) {

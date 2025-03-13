@@ -71,17 +71,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .promoCode(promoCode)
                 .build();
 
-        if (!"cash".equalsIgnoreCase(paymentRequestDto.getPaymentMethod())) {
-            try {
-                passengerServiceClient.updatePassengerBalance(
-                        paymentRequestDto.getPassengerId(),
-                        new BalanceUpdateDto(finalAmount.doubleValue())
-                );
-                payment.setStatus("complete");
-            } catch (Exception e) {
-                throw new PaymentProcessingException(String.format("Failed to update passenger balance: " + e.getMessage()));
-            }
-        }
+
 
         Payment savedPayment = paymentRepository.save(payment);
         return mapper.convertToDto(savedPayment, PaymentResponseDto.class);
