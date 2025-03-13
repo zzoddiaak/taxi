@@ -9,6 +9,7 @@ import rides_service.rides_service.dto.driver.DriverResponseDto;
 import rides_service.rides_service.dto.passenger.PassengerResponseDto;
 import rides_service.rides_service.dto.payment.PaymentRequestDto;
 import rides_service.rides_service.dto.payment.PaymentResponseDto;
+
 import rides_service.rides_service.dto.ride.RideListResponseDto;
 import rides_service.rides_service.dto.ride.RideRequestDto;
 import rides_service.rides_service.dto.ride.RideResponseDto;
@@ -62,27 +63,26 @@ public class RideServiceImpl implements RideService {
                 })
                 .collect(Collectors.toList());
 
+
         return RideListResponseDto.builder()
                 .ride(rideResponseDtos)
                 .build();
     }
+
     @Override
     public RideResponseDto getRideById(Long id) {
         Ride ride = rideRepository.findById(id)
                 .orElseThrow(() -> new RideNotFoundException("Ride not found with id: " + id));
 
-        // Получение данных о водителе и пассажире через Feign-клиенты
         DriverResponseDto driverResponseDto = driverServiceClient.getDriverById(ride.getDriverId());
         PassengerResponseDto passengerResponseDto = passengerServiceClient.getPassengerById(ride.getPassengerId());
 
-        // Получение данных о платеже через Feign-клиент
         PaymentResponseDto paymentResponseDto = paymentServiceClient.getPaymentByRideId(id);
 
-        // Создание DTO с полными данными о водителе, пассажире и платеже
         RideResponseDto rideResponseDto = mapper.convertToDto(ride, RideResponseDto.class);
         rideResponseDto.setDriver(driverResponseDto);
         rideResponseDto.setPassenger(passengerResponseDto);
-        rideResponseDto.setAmount(paymentResponseDto); // Установка данных о платеже
+        rideResponseDto.setAmount(paymentResponseDto);
 
         return rideResponseDto;
     }
@@ -156,7 +156,9 @@ public class RideServiceImpl implements RideService {
 
     private BigDecimal calculateRideCost(Float distance) {
         return PRICE_PER_KM.multiply(BigDecimal.valueOf(distance));
+
     }
+
 
     @Override
     public void deleteRide(Long id) {
