@@ -4,18 +4,19 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import passenger_service.passenger_service.config.mapper.DtoMapper;
-import passenger_service.passenger_service.dto.PassengerListResponseDto;
-import passenger_service.passenger_service.dto.PassengerRequestDto;
-import passenger_service.passenger_service.dto.PassengerResponseDto;
+import passenger_service.passenger_service.dto.passenger.PassengerListResponseDto;
+import passenger_service.passenger_service.dto.passenger.PassengerRequestDto;
+import passenger_service.passenger_service.dto.passenger.PassengerResponseDto;
 import passenger_service.passenger_service.entity.FinancialData;
 import passenger_service.passenger_service.entity.Passenger;
+import passenger_service.passenger_service.exception.passenger.FinancialDataNotFoundException;
 import passenger_service.passenger_service.exception.passenger.PassengerNotFoundException;
 import passenger_service.passenger_service.repository.FinancialDataRepository;
 import passenger_service.passenger_service.repository.PassengerRepository;
 import passenger_service.passenger_service.service.api.PassengerService;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +26,22 @@ public class PassengerServiceImpl implements PassengerService {
     private final PassengerRepository passengerRepository;
     private final FinancialDataRepository financialDataRepository;
     private final DtoMapper mapper;
+
+    @Override
+    public void updatePassengerRating(Long id, Float rating) {
+        Passenger passenger = passengerRepository.findById(id)
+                .orElseThrow(() -> new PassengerNotFoundException("Passenger not found with id: " + id));
+
+        Double currentRating = passenger.getAverageRating();
+        Integer ratingCount = passenger.getRatingCount();
+
+        Double newRating = ((currentRating * ratingCount) + rating) / (ratingCount + 1);
+
+        passenger.setAverageRating(newRating);
+        passenger.setRatingCount(ratingCount + 1);
+
+        passengerRepository.save(passenger);
+    }
 
     @Override
     public PassengerResponseDto createPassenger(PassengerRequestDto passengerRequestDto) {

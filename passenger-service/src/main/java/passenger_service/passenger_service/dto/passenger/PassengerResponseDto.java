@@ -1,4 +1,4 @@
-package passenger_service.passenger_service.dto;
+package passenger_service.passenger_service.dto.passenger;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

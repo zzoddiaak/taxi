@@ -11,5 +11,6 @@ public interface DriverService {
     DriverListResponseDto getAllDrivers();
     DriverResponseDto updateDriver(Long id, DriverRequestDto driverRequestDto);
     void deleteDriver(Long id);
+    void updateDriverRating(Long id, Float rating);
 
 }
