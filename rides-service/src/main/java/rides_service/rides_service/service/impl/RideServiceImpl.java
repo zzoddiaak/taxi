@@ -23,8 +23,10 @@ import rides_service.rides_service.service.api.DriverServiceClient;
 import rides_service.rides_service.service.api.PassengerServiceClient;
 import rides_service.rides_service.service.api.PaymentServiceClient;
 import rides_service.rides_service.service.api.RideService;
+import rides_service.rides_service.service.kafka.KafkaProducerService;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +43,7 @@ public class RideServiceImpl implements RideService {
     private final DriverServiceClient driverServiceClient;
     private final PassengerServiceClient passengerServiceClient;
     private final PaymentServiceClient paymentServiceClient;
+    private final KafkaProducerService kafkaProducerService;
 
 
 
@@ -130,9 +133,9 @@ public class RideServiceImpl implements RideService {
         ride.setDriverId(rideRequestDto.getDriverId());
         ride.setPassengerId(rideRequestDto.getPassengerId());
         ride.setRoute(route);
-        ride.setStartTime(rideRequestDto.getStartTime());
-        ride.setEndTime(rideRequestDto.getEndTime());
-        ride.setStatus(rideRequestDto.getStatus());
+        ride.setStartTime(null);
+        ride.setEndTime(null);
+        ride.setStatus("PENDING");
         ride.setAmount(amount);
 
         Ride savedRide = rideRepository.save(ride);
@@ -148,10 +151,32 @@ public class RideServiceImpl implements RideService {
 
         PaymentResponseDto paymentResponseDto = paymentServiceClient.createPayment(paymentRequestDto);
 
+        kafkaProducerService.sendAvailableRide(savedRide.getId().toString());
+
         RideResponseDto rideResponseDto = mapper.convertToDto(savedRide, RideResponseDto.class);
         rideResponseDto.setAmount(paymentResponseDto);
 
         return rideResponseDto;
+    }
+
+    @Override
+    public void updateRideStatus(Long rideId, String status) {
+        Ride ride = rideRepository.findById(rideId)
+                .orElseThrow(() -> new RideNotFoundException("Ride not found with id: " + rideId));
+
+        if ("ACCEPTED".equals(status)) {
+            ride.setStatus("ACCEPTED");
+        } else if ("IN_PROGRESS".equals(status)) {
+            ride.setStartTime(LocalDateTime.now());
+            ride.setStatus("IN_PROGRESS");
+        } else if ("COMPLETED".equals(status)) {
+            ride.setEndTime(LocalDateTime.now());
+            ride.setStatus("COMPLETED");
+        } else if ("DECLINED".equals(status)) {
+            ride.setStatus("DECLINED");
+        }
+
+        rideRepository.save(ride);
     }
 
     private BigDecimal calculateRideCost(Float distance) {

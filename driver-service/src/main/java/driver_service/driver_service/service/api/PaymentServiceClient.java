@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "payment-service", url = "http://localhost:8082/api/payments")
+@FeignClient(name = "payment-service", url = "http://payment-service:8082/api/payments")
 public interface PaymentServiceClient {
 
     @PutMapping("/{id}/status")

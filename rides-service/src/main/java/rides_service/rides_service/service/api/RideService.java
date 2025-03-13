@@ -14,4 +14,5 @@ public interface RideService {
     RideListResponseDto getAllRides();
     RideResponseDto updateRide(Long id, RideRequestDto rideRequestDto);
     void deleteRide(Long id);
+    void updateRideStatus(Long rideId, String status);
 }
