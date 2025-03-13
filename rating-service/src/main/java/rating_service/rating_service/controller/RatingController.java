@@ -15,7 +15,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/ratings")
 @RequiredArgsConstructor
-public class RatingController {
+public class
+RatingController {
 
     private final RatingService ratingService;
 
