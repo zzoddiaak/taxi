@@ -107,7 +107,7 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public void updateDriverRating(Long id, Float rating) {
         Driver driver = driverRepository.findById(id)
-                .orElseThrow(() -> new DriverNotFoundException("Driver not found with id: " + id));
+                .orElseThrow(() -> new DriverNotFoundException(String.format("Driver not found with id: " + id)));
 
         Double currentRating = driver.getAverageRating();
         Integer ratingCount = driver.getRatingCount();

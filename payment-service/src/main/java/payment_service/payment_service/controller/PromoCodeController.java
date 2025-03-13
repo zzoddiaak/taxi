@@ -12,29 +12,34 @@ import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.*;
+
 @RestController
 @RequestMapping("/api/promocodes")
 @RequiredArgsConstructor
+@Tag(name = "PromoCode Controller", description = "API for managing promo codes")
 public class PromoCodeController {
 
     private final PromoCodeService promoCodeService;
 
-    // Endpoint для создания промокода
     @PostMapping
+    @Operation(summary = "Create a promo code", description = "Creates a new promo code")
     public ResponseEntity<PromoCodeResponseDto> createPromoCode(@RequestBody PromoCodeRequestDto promoCodeRequestDto) {
         PromoCodeResponseDto promoCodeResponseDto = promoCodeService.createPromoCode(promoCodeRequestDto);
         return new ResponseEntity<>(promoCodeResponseDto, HttpStatus.CREATED);
     }
 
-    // Endpoint для получения промокода по ID
     @GetMapping("/{id}")
+    @Operation(summary = "Get promo code by ID", description = "Retrieves a promo code by its ID")
     public ResponseEntity<PromoCodeResponseDto> getPromoCodeById(@PathVariable Long id) {
         PromoCodeResponseDto promoCodeResponseDto = promoCodeService.getPromoCodeById(id);
         return new ResponseEntity<>(promoCodeResponseDto, HttpStatus.OK);
     }
 
-    // Endpoint для получения промокода по его коду
     @GetMapping("/code/{code}")
+    @Operation(summary = "Get promo code by code", description = "Retrieves a promo code by its code")
     public ResponseEntity<PromoCodeResponseDto> getPromoCodeByCode(@PathVariable String code) {
         PromoCode promoCode = promoCodeService.getPromoCodeByCode(code);
         PromoCodeResponseDto promoCodeResponseDto = new PromoCodeResponseDto(
@@ -46,8 +51,8 @@ public class PromoCodeController {
         return new ResponseEntity<>(promoCodeResponseDto, HttpStatus.OK);
     }
 
-    // Endpoint для применения скидки с промокодом
     @PostMapping("/apply-discount")
+    @Operation(summary = "Apply discount", description = "Applies a discount using a promo code")
     public ResponseEntity<BigDecimal> applyDiscount(@RequestBody DiscountRequestDto discountRequestDto) {
         BigDecimal discountedAmount = promoCodeService.applyDiscount(discountRequestDto.getAmount(), discountRequestDto.getPromoCode());
         return new ResponseEntity<>(discountedAmount, HttpStatus.OK);
