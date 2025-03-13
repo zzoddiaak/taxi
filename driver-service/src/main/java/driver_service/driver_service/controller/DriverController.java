@@ -21,6 +21,19 @@ public class DriverController {
     private final DriverService service;
     private final PaymentServiceClient paymentServiceClient;
     private final KafkaProducerService kafkaProducerService;
+    private final KafkaProducerService driverRatingService;
+
+
+    @PostMapping("/{driverId}/rate-passenger/{passengerId}")
+    public ResponseEntity<Void> ratePassenger(
+            @PathVariable Long driverId,
+            @PathVariable Long passengerId,
+            @RequestParam Float rating) {
+
+        driverRatingService.ratePassenger(driverId, passengerId, rating);
+        return ResponseEntity.ok().build();
+    }
+
 
     @PostMapping("/{driverId}/start-ride/{rideId}")
     public ResponseEntity<Void> startRide(@PathVariable Long driverId, @PathVariable Long rideId) {

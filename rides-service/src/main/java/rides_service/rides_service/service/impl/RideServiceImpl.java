@@ -169,6 +169,7 @@ public class RideServiceImpl implements RideService {
         } else if ("COMPLETED".equals(status)) {
             ride.setEndTime(LocalDateTime.now());
             ride.setStatus("COMPLETED");
+            kafkaProducerService.sendRideCompleted(rideId.toString(), ride.getPassengerId().toString(), ride.getAmount().toString());
         } else if ("DECLINED".equals(status)) {
             ride.setStatus("DECLINED");
         }

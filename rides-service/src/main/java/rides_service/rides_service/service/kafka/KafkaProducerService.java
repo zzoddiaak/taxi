@@ -28,4 +28,9 @@ public class KafkaProducerService {
     public void sendRideEnd(String rideId) {
         kafkaTemplate.send("ride-end", rideId);
     }
+
+    public void sendRideCompleted(String rideId, String passengerId, String amount) {
+        String message = rideId + ":" + passengerId + ":" + amount;
+        kafkaTemplate.send("ride-completed", message);
+    }
 }

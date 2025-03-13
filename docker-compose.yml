@@ -8,11 +8,6 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-    healthcheck:
-      test: ["CMD", "zkServer.sh", "status"]
-      interval: 20s
-      timeout: 10s
-      retries: 10
     deploy:
       resources:
         limits:
@@ -21,8 +16,7 @@ services:
   kafka:
     image: bitnami/kafka:latest
     depends_on:
-      zookeeper:
-        condition: service_healthy
+      - zookeeper
     ports:
       - "9092:9092"
     environment:
@@ -31,12 +25,6 @@ services:
       KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
       KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
-
-    healthcheck:
-      test: ["CMD", "kafka-topics.sh", "--list", "--bootstrap-server", "kafka:9092"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
 
   # База данных для rating-service
   rating-db:
@@ -49,11 +37,6 @@ services:
       - "5436:5432"
     volumes:
       - rating-db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
   # База данных для payment-service
   payment-db:
@@ -66,11 +49,6 @@ services:
       - "5435:5432"
     volumes:
       - payment-db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
   # База данных для passenger-service
   passenger-db:
@@ -83,11 +61,6 @@ services:
       - "5434:5432"
     volumes:
       - passenger-db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
   # База данных для driver-service
   driver-db:
@@ -100,11 +73,6 @@ services:
       - "5432:5432"
     volumes:
       - driver-db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
   # База данных для ride-service
   ride-db:
@@ -117,11 +85,6 @@ services:
       - "5433:5432"
     volumes:
       - ride-db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
   # Сервис driver-service
   driver-service:
@@ -134,10 +97,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://driver-db:5432/driver-service
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
-      driver-db:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
+      - driver-db
+      - kafka
 
   # Сервис passenger-service
   passenger-service:
@@ -148,9 +109,10 @@ services:
       - "8081:8081"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://passenger-db:5432/passenger-service
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
-      passenger-db:
-        condition: service_healthy
+      - passenger-db
+      - kafka
 
   # Сервис payment-service
   payment-service:
@@ -161,9 +123,10 @@ services:
       - "8082:8082"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://payment-db:5432/payment-service
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
-      payment-db:
-        condition: service_healthy
+      - payment-db
+      - kafka
 
   # Сервис rating-service
   rating-service:
@@ -174,9 +137,10 @@ services:
       - "8083:8083"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://rating-db:5432/rating-service
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
-      rating-db:
-        condition: service_healthy
+      - rating-db
+      - kafka
 
   # Сервис ride-service
   ride-service:
@@ -189,10 +153,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://ride-db:5432/rides-service
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
-      ride-db:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
+      - ride-db
+      - kafka
 
 # Тома для хранения данных PostgreSQL
 volumes:

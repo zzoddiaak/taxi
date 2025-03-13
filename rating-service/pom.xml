@@ -14,6 +14,11 @@
 	<packaging>jar</packaging>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
 		<!-- Your existing dependencies -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
