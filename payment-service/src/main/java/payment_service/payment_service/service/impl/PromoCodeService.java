@@ -31,20 +31,20 @@ public class PromoCodeService {
 
     public PromoCodeResponseDto getPromoCodeById(Long id) {
         PromoCode promoCode = promoCodeRepository.findById(id)
-                .orElseThrow(() -> new PromoCodeNotFoundException("Promo code not found"));
+                .orElseThrow(() -> new PromoCodeNotFoundException(String.format("Promo code not found")));
         return mapper.convertToPromoCodeResponseDto(promoCode);
     }
 
     public PromoCode getPromoCodeByCode(String code) {
         return promoCodeRepository.findByCode(code)
-                .orElseThrow(() -> new PromoCodeNotFoundException("Promo code not found with code: " + code));
+                .orElseThrow(() -> new PromoCodeNotFoundException(String.format("Promo code not found with code: " + code)));
     }
 
     public BigDecimal applyDiscount(BigDecimal amount, String code) {
         PromoCode promoCode = getPromoCodeByCode(code);
 
         if (promoCode.getExpirationDate().isBefore(LocalDateTime.now())) {
-            throw new PromoCodeExpiredException("Promo code has expired");
+            throw new PromoCodeExpiredException(String.format("Promo code has expired"));
         }
 
         BigDecimal discount = amount.multiply(promoCode.getDiscountPercentage()).divide(BigDecimal.valueOf(100));

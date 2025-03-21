@@ -1,0 +1,16 @@
+package rating_service.rating_service.service.api;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import rating_service.rating_service.dto.RatingUpdateDto;
+
+@FeignClient(name = "passenger-service", url = "http://passenger-service:8081/api/passengers")
+public interface PassengerServiceClient {
+
+    @PutMapping("/{id}/rating")
+    ResponseEntity<Void> updatePassengerRating(@PathVariable Long id, @RequestBody RatingUpdateDto ratingUpdateDto);
+}

@@ -4,18 +4,20 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import passenger_service.passenger_service.config.mapper.DtoMapper;
-import passenger_service.passenger_service.dto.PassengerListResponseDto;
-import passenger_service.passenger_service.dto.PassengerRequestDto;
-import passenger_service.passenger_service.dto.PassengerResponseDto;
+import passenger_service.passenger_service.dto.passenger.PassengerListResponseDto;
+import passenger_service.passenger_service.dto.passenger.PassengerRequestDto;
+import passenger_service.passenger_service.dto.passenger.PassengerResponseDto;
 import passenger_service.passenger_service.entity.FinancialData;
 import passenger_service.passenger_service.entity.Passenger;
+import passenger_service.passenger_service.exception.passenger.FinancialDataNotFoundException;
+import passenger_service.passenger_service.exception.passenger.InsufficientBalanceException;
 import passenger_service.passenger_service.exception.passenger.PassengerNotFoundException;
 import passenger_service.passenger_service.repository.FinancialDataRepository;
 import passenger_service.passenger_service.repository.PassengerRepository;
 import passenger_service.passenger_service.service.api.PassengerService;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +27,22 @@ public class PassengerServiceImpl implements PassengerService {
     private final PassengerRepository passengerRepository;
     private final FinancialDataRepository financialDataRepository;
     private final DtoMapper mapper;
+
+    @Override
+    public void updatePassengerRating(Long id, Float rating) {
+        Passenger passenger = passengerRepository.findById(id)
+                .orElseThrow(() -> new PassengerNotFoundException(String.format("Passenger not found with id: " + id)));
+
+        Double currentRating = passenger.getAverageRating();
+        Integer ratingCount = passenger.getRatingCount();
+
+        Double newRating = ((currentRating * ratingCount) + rating) / (ratingCount + 1);
+
+        passenger.setAverageRating(newRating);
+        passenger.setRatingCount(ratingCount + 1);
+
+        passengerRepository.save(passenger);
+    }
 
     @Override
     public PassengerResponseDto createPassenger(PassengerRequestDto passengerRequestDto) {
@@ -44,7 +62,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public PassengerResponseDto updatePassenger(Long id, PassengerRequestDto passengerRequestDto) {
         Passenger existingPassenger = passengerRepository.findById(id)
-                .orElseThrow(() -> new PassengerNotFoundException("Passenger not found with id: " + id));
+                .orElseThrow(() -> new PassengerNotFoundException(String.format("Passenger not found with id: " + id)));
 
         existingPassenger.setFirstName(passengerRequestDto.getFirstName());
         existingPassenger.setLastName(passengerRequestDto.getLastName());
@@ -73,7 +91,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public PassengerResponseDto getPassengerById(Long id) {
         Passenger passenger = passengerRepository.findById(id)
-                .orElseThrow(() -> new PassengerNotFoundException("Passenger not found with id: " + id));
+                .orElseThrow(() -> new PassengerNotFoundException(String.format("Passenger not found with id: " + id)));
         return mapper.convertToPassengerDto(passenger);
     }
 
@@ -94,5 +112,23 @@ public class PassengerServiceImpl implements PassengerService {
         Passenger passenger = passengerRepository.findById(id)
                 .orElseThrow(() -> new PassengerNotFoundException(String.format("Passenger not found with id: " + id)));
         passengerRepository.delete(passenger);
+    }
+
+    @Override
+    public void updatePassengerBalance(Long id, Double amount) {
+        Passenger passenger = passengerRepository.findById(id)
+                .orElseThrow(() -> new PassengerNotFoundException(String.format("Passenger not found with id: " + id)));
+
+        FinancialData financialData = passenger.getFinancialData();
+        if (financialData == null) {
+            throw new FinancialDataNotFoundException(String.format("Financial data not found for passenger id: " + id));
+        }
+
+        if (financialData.getBalance() < amount) {
+            throw new InsufficientBalanceException(String.format("Insufficient balance for passenger id: " + id));
+        }
+
+        financialData.setBalance(financialData.getBalance() - amount);
+        financialDataRepository.save(financialData);
     }
 }

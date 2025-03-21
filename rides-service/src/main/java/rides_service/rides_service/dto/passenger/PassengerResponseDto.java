@@ -1,4 +1,4 @@
-package passenger_service.passenger_service.dto;
+package rides_service.rides_service.dto.passenger;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,16 +9,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PassengerRequestDto {
-
+public class PassengerResponseDto {
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;
     private String phoneNumber;
-    private Double balance;
-    private String cardNumber;
-    private String cardExpiryDate;
-    private String cardCvv;
-    private String promo;
+    private RatingDto rating;
     private Double driverRating;
 }

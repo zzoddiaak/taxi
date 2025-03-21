@@ -2,8 +2,8 @@ package passenger_service.passenger_service.config.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import passenger_service.passenger_service.dto.PassengerRequestDto;
-import passenger_service.passenger_service.dto.PassengerResponseDto;
+import passenger_service.passenger_service.dto.passenger.PassengerRequestDto;
+import passenger_service.passenger_service.dto.passenger.PassengerResponseDto;
 import passenger_service.passenger_service.dto.financial.FinancialDataDto;
 import passenger_service.passenger_service.dto.rating.RatingDto;
 import passenger_service.passenger_service.entity.FinancialData;

@@ -4,8 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import rides_service.rides_service.dto.driver.DriverResponseDto;
+import rides_service.rides_service.dto.passenger.PassengerResponseDto;
+import rides_service.rides_service.dto.payment.PaymentResponseDto;
 import rides_service.rides_service.dto.route.RouteResponseDto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -13,12 +17,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RideResponseDto {
-
     private Long id;
-    private Long driverId;
-    private Long passengerId;
+    private DriverResponseDto driver;
+    private PassengerResponseDto passenger;
     private RouteResponseDto route;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String status;
+    private PaymentResponseDto amount;
 }

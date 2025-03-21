@@ -74,88 +74,79 @@ databaseChangeLog:
                   type: BIGINT
                   constraints:
                     nullable: true
+              - column:
+                  name: passenger_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
         - addForeignKeyConstraint:
             baseTableName: payments
             baseColumnNames: promo_code_id
             referencedTableName: promo_codes
             referencedColumnNames: id
             constraintName: fk_payment_promo_code
+
   - changeSet:
-      id: insert-test-payments
+      id: insert-test-promo-codes
       author: Daniil
       changes:
         - insert:
-            tableName: payments
+            tableName: promo_codes
             columns:
               - column:
-                  name: ride_id
-                  value: 1
+                  name: code
+                  value: "SUMMER2023"
               - column:
-                  name: amount
-                  value: 150.50
+                  name: discount_percentage
+                  value: 10.00
               - column:
-                  name: payment_method
-                  value: "credit_card"
-              - column:
-                  name: status
-                  value: "completed"
+                  name: expiration_date
+                  value: "2023-12-31T23:59:59"
         - insert:
-            tableName: payments
+            tableName: promo_codes
             columns:
               - column:
-                  name: ride_id
-                  value: 2
+                  name: code
+                  value: "WINTER2023"
               - column:
-                  name: amount
-                  value: 200.00
+                  name: discount_percentage
+                  value: 15.00
               - column:
-                  name: payment_method
-                  value: "cash"
-              - column:
-                  name: status
-                  value: "pending"
+                  name: expiration_date
+                  value: "2023-12-31T23:59:59"
         - insert:
-            tableName: payments
+            tableName: promo_codes
             columns:
               - column:
-                  name: ride_id
-                  value: 3
+                  name: code
+                  value: "SPRING2023"
               - column:
-                  name: amount
-                  value: 180.75
+                  name: discount_percentage
+                  value: 20.00
               - column:
-                  name: payment_method
-                  value: "credit_card"
-              - column:
-                  name: status
-                  value: "completed"
+                  name: expiration_date
+                  value: "2023-12-31T23:59:59"
         - insert:
-            tableName: payments
+            tableName: promo_codes
             columns:
               - column:
-                  name: ride_id
-                  value: 4
+                  name: code
+                  value: "AUTUMN2023"
               - column:
-                  name: amount
-                  value: 90.00
+                  name: discount_percentage
+                  value: 25.00
               - column:
-                  name: payment_method
-                  value: "cash"
-              - column:
-                  name: status
-                  value: "failed"
+                  name: expiration_date
+                  value: "2023-12-31T23:59:59"
         - insert:
-            tableName: payments
+            tableName: promo_codes
             columns:
               - column:
-                  name: ride_id
-                  value: 5
+                  name: code
+                  value: "NEWYEAR2024"
               - column:
-                  name: amount
-                  value: 300.25
+                  name: discount_percentage
+                  value: 30.00
               - column:
-                  name: payment_method
-                  value: "credit_card"
-              - column:
-                  name: status
-                  value: "completed"
+                  name: expiration_date
+                  value: "2024-01-31T23:59:59"

@@ -25,8 +25,7 @@ databaseChangeLog:
               - column:
                   name: start_time
                   type: TIMESTAMP
-                  constraints:
-                    nullable: false
+
               - column:
                   name: end_time
                   type: TIMESTAMP
@@ -38,6 +37,11 @@ databaseChangeLog:
               - column:
                   name: route_id
                   type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price_id
+                  type: DECIMAL(10, 2)
                   constraints:
                     nullable: false
               - addForeignKeyConstraint:
@@ -130,29 +134,3 @@ databaseChangeLog:
               - column:
                   name: estimated_time
                   value: 10
-
-  - changeSet:
-      id: insert-table-rides
-      author: Daniil
-      changes:
-        - insert:
-            tableName: rides
-            columns:
-              - column:
-                  name: driver_id
-                  value: 1
-              - column:
-                  name: passenger_id
-                  value: 1
-              - column:
-                  name: start_time
-                  value: '2023-10-01 08:00:00'
-              - column:
-                  name: end_time
-                  value: '2023-10-01 08:15:00'
-              - column:
-                  name: status
-                  value: 'Завершено'
-              - column:
-                  name: route_id
-                  value: 1
