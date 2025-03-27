@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RatingDto {
+public class RatingDtoDriver {
     private Double averageRating;
     private Integer ratingCount;
     private Double passengerRating;
