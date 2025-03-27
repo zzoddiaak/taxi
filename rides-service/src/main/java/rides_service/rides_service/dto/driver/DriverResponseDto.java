@@ -18,5 +18,5 @@ public class DriverResponseDto {
     private String phoneNumber;
     private String licenseNumber;
     private CarDto car;
-    private RatingDto rating;
+    private RatingDtoDriver rating;
 }
