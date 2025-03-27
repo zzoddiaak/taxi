@@ -1,4 +1,4 @@
-package rating_service.rating_service.config;
+package rating_service.rating_service.config.kafka;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
