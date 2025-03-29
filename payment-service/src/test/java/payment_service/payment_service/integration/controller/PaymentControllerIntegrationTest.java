@@ -9,9 +9,11 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import payment_service.payment_service.dto.payment.PaymentRequestDto;
 import payment_service.payment_service.dto.payment.PaymentResponseDto;
 import payment_service.payment_service.dto.payment.PaymentStatusUpdateDto;
+import payment_service.payment_service.integration.config.TestContainersInitializer;
 
 import java.math.BigDecimal;
 
@@ -19,8 +21,8 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@EmbeddedKafka(topics = {"ride-completed"})
 @ActiveProfiles("test")
+@ContextConfiguration(initializers = TestContainersInitializer.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class PaymentControllerIntegrationTest {
 

@@ -9,7 +9,6 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,11 +16,11 @@ import java.util.Map;
 @Configuration
 public class KafkaTestConfig {
 
-    @Value("${spring.embedded.kafka.brokers}")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
     @Bean
-    public KafkaConsumer<String, String> kafkaConsumer(EmbeddedKafkaBroker embeddedKafka) {
+    public KafkaConsumer<String, String> kafkaConsumer() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "test-group");
@@ -32,7 +31,7 @@ public class KafkaTestConfig {
     }
 
     @Bean
-    public KafkaProducer<String, String> kafkaProducer(EmbeddedKafkaBroker embeddedKafka) {
+    public KafkaProducer<String, String> kafkaProducer() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);

@@ -4,6 +4,7 @@ import driver_service.driver_service.dto.car.CarDto;
 import driver_service.driver_service.dto.driver.DriverRequestDto;
 import driver_service.driver_service.dto.driver.DriverResponseDto;
 import driver_service.driver_service.dto.payment.PaymentStatusUpdateDto;
+import driver_service.driver_service.integration.config.TestContainersInitializer;
 import driver_service.driver_service.service.api.DriverService;
 import driver_service.driver_service.service.api.PaymentServiceClient;
 import driver_service.driver_service.service.kafka.KafkaProducerService;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -24,9 +26,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@EmbeddedKafka(topics = {"ride-start", "ride-end", "ride-acceptance", "passenger-rating-topic"})
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@ContextConfiguration(initializers = TestContainersInitializer.class)
 class DriverControllerIntegrationTest {
 
     @MockBean

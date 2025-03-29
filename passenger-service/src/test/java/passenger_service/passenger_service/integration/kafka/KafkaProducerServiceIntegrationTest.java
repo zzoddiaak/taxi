@@ -2,13 +2,15 @@ package passenger_service.passenger_service.integration.kafka;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import passenger_service.passenger_service.service.kafka.KafkaProducerService;
+import passenger_service.passenger_service.integration.config.TestContainersInitializer;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -18,10 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @EmbeddedKafka(topics = {"passenger-rating-topic"})
 @ActiveProfiles("test")
+@ContextConfiguration(initializers = TestContainersInitializer.class)
+@DirtiesContext
 class KafkaProducerServiceIntegrationTest {
-
-    @Autowired
-    private KafkaProducer<String, String> kafkaProducer;
 
     @Autowired
     private KafkaConsumer<String, String> kafkaConsumer;

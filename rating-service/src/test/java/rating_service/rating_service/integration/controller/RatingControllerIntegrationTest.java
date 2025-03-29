@@ -8,10 +8,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import rating_service.rating_service.dto.RatingListResponseDto;
 import rating_service.rating_service.dto.RatingRequestDto;
 import rating_service.rating_service.dto.RatingResponseDto;
+import rating_service.rating_service.integration.config.KafkaTestContainersInitializer;
 import rating_service.rating_service.service.api.RatingService;
 
 import java.util.List;
@@ -24,6 +27,8 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EmbeddedKafka(topics = {"passenger-rating-topic", "driver-rating-topic"})
 @ActiveProfiles("test")
+@ContextConfiguration(initializers = KafkaTestContainersInitializer.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class RatingControllerIntegrationTest {
 
     @LocalServerPort
