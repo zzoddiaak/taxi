@@ -7,8 +7,9 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import payment_service.payment_service.integration.config.TestContainersInitializer;
 import payment_service.payment_service.service.kafka.KafkaConsumerService;
 
 import java.time.Duration;
@@ -17,8 +18,8 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@EmbeddedKafka(topics = {"ride-completed"})
 @ActiveProfiles("test")
+@ContextConfiguration(initializers = TestContainersInitializer.class)
 class KafkaConsumerServiceIntegrationTest {
 
     @Autowired

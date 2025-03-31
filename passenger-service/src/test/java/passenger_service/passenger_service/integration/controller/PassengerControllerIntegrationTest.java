@@ -3,6 +3,9 @@ package passenger_service.passenger_service.integration.controller;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +15,14 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import passenger_service.passenger_service.dto.financial.BalanceUpdateDto;
 import passenger_service.passenger_service.dto.passenger.PassengerRequestDto;
 import passenger_service.passenger_service.dto.passenger.PassengerResponseDto;
 import passenger_service.passenger_service.dto.rating.RatingUpdateDto;
 import passenger_service.passenger_service.entity.FinancialData;
 import passenger_service.passenger_service.entity.Passenger;
+import passenger_service.passenger_service.integration.config.TestContainersInitializer;
 import passenger_service.passenger_service.repository.FinancialDataRepository;
 import passenger_service.passenger_service.repository.PassengerRepository;
 import passenger_service.passenger_service.service.kafka.KafkaProducerService;
@@ -31,6 +36,7 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EmbeddedKafka(topics = {"passenger-rating-topic"})
 @ActiveProfiles("test")
+@ContextConfiguration(initializers = TestContainersInitializer.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class PassengerControllerIntegrationTest {
 
@@ -50,6 +56,7 @@ class PassengerControllerIntegrationTest {
     void setUp() {
         RestAssured.port = port;
     }
+
 
     @Test
     void rateDriver() {

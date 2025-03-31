@@ -1,5 +1,6 @@
 package driver_service.driver_service.integration.kafka;
 
+import driver_service.driver_service.integration.config.TestContainersInitializer;
 import driver_service.driver_service.service.kafka.KafkaConsumerService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -17,8 +19,8 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@EmbeddedKafka(topics = {"ride-start", "ride-end", "ride-acceptance", "passenger-rating-topic"})
 @ActiveProfiles("test")
+@ContextConfiguration(initializers = TestContainersInitializer.class)
 class KafkaConsumerServiceIntegrationTest {
 
     @Autowired
