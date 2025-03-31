@@ -9,9 +9,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import rides_service.rides_service.dto.route.RouteRequestDto;
 import rides_service.rides_service.dto.route.RouteResponseDto;
 import rides_service.rides_service.dto.route.RouteListResponseDto;
+import rides_service.rides_service.integration.config.TestContainersInitializer;
 import rides_service.rides_service.service.api.RouteService;
 
 import java.util.Collections;
@@ -24,6 +26,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EmbeddedKafka(topics = {"available-rides", "ride-acceptance", "ride-start", "ride-end"})
 @ActiveProfiles("test")
+@ContextConfiguration(initializers = TestContainersInitializer.class)
 class RouteControllerRestAssuredTest {
 
     @LocalServerPort

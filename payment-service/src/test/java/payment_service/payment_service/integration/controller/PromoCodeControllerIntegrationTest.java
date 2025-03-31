@@ -9,9 +9,11 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import payment_service.payment_service.dto.promo.PromoCodeRequestDto;
 import payment_service.payment_service.dto.promo.PromoCodeResponseDto;
 import payment_service.payment_service.dto.promo.DiscountRequestDto;
+import payment_service.payment_service.integration.config.TestContainersInitializer;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,6 +24,7 @@ import static org.hamcrest.Matchers.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EmbeddedKafka(topics = {"ride-completed"})
 @ActiveProfiles("test")
+@ContextConfiguration(initializers = TestContainersInitializer.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class PromoCodeControllerIntegrationTest {
 
