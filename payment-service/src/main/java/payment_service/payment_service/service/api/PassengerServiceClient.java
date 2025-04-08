@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import payment_service.payment_service.dto.passenger.BalanceUpdateDto;
 
-@FeignClient(name = "passenger-service", url = "http://passenger-service:8081/api/passengers")
+@FeignClient(name = "passenger-service")
 public interface PassengerServiceClient {
-
-    @PutMapping("{id}/balance")
-    ResponseEntity<Void> updatePassengerBalance(@PathVariable Long id, @RequestBody BalanceUpdateDto balanceUpdateDto);
+    @PutMapping("/api/passengers/{id}/balance")
+    ResponseEntity<Void> updatePassengerBalance(
+            @PathVariable Long id,
+            @RequestBody BalanceUpdateDto balanceUpdateDto
+    );
 }

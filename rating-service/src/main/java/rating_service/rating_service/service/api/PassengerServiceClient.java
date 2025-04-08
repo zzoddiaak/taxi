@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import rating_service.rating_service.dto.RatingUpdateDto;
 
-@FeignClient(name = "passenger-service", url = "http://passenger-service:8081/api/passengers")
+@FeignClient(name = "passenger-service")
 public interface PassengerServiceClient {
-
-    @PutMapping("/{id}/rating")
-    ResponseEntity<Void> updatePassengerRating(@PathVariable Long id, @RequestBody RatingUpdateDto ratingUpdateDto);
+    @PutMapping("/api/passengers/{id}/rating")
+    ResponseEntity<Void> updatePassengerRating(
+            @PathVariable Long id,
+            @RequestBody RatingUpdateDto ratingUpdateDto
+    );
 }

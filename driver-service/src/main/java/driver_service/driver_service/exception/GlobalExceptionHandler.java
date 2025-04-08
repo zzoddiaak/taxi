@@ -3,24 +3,19 @@ package driver_service.driver_service.exception;
 import driver_service.driver_service.exception.car.CarAlreadyAssignedException;
 import driver_service.driver_service.exception.car.CarNotFoundException;
 import driver_service.driver_service.exception.driver.DriverNotFoundException;
-import jakarta.validation.ConstraintViolationException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
 
     @ExceptionHandler({DriverNotFoundException.class,
                         CarNotFoundException.class,
