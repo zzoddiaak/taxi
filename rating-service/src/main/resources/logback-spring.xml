@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProperty name="APP_NAME" source="spring.application.name" defaultValue="rating-service"/>
+
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>logstash:5000</destination>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <mdc/>
+                <context/>
+                <version/>
+                <logLevel/>
+                <loggerName/>
+                <message/>
+                <pattern>
+                    <pattern>
+                        {
+                        "service": "${APP_NAME}",
+                        "traceId": "%mdc{traceId:-}",
+                        "spanId": "%mdc{spanId:-}"
+                        }
+                    </pattern>
+                </pattern>
+                <threadName/>
+                <stackTrace/>
+            </providers>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="LOGSTASH"/>
+    </root>
+</configuration>
