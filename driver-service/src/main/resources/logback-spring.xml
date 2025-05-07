@@ -18,10 +18,6 @@
                         }
                     </pattern>
                 </pattern>
-                <mdc>
-                    <excludeMdcKeyName>traceId</excludeMdcKeyName>
-                    <excludeMdcKeyName>spanId</excludeMdcKeyName>
-                </mdc>
                 <message/>
                 <logLevel/>
                 <loggerName/>
