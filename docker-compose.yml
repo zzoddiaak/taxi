@@ -1,20 +1,22 @@
-version: '3.8'
 
 services:
-  # Сервис для Kafka
+
+  # Инфраструктурные сервисы
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper-1
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - taxi-network
     deploy:
       resources:
         limits:
           memory: 1g
 
   kafka:
-    image: bitnami/kafka:latest
+    image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
     ports:
@@ -22,47 +24,56 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - taxi-network
 
-  # База данных для rating-service
-  rating-db:
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.2
+    environment:
+      KEYCLOAK_ADMIN: daniil
+      KEYCLOAK_ADMIN_PASSWORD: daniil
+      KC_HOSTNAME_ADMIN: localhost
+
+
+      KC_HOSTNAME: keycloak
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+
+      KC_HTTP_PORT: 8181
+      KC_HTTP_ENABLED: true
+      KC_HTTPS_ENABLED: false
+
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+    command: start-dev
+    ports:
+      - "8181:8181"
+    depends_on:
+      - keycloak-db
+    networks:
+      - taxi-network
+
+  keycloak-db:
     image: postgres:13
     environment:
-      POSTGRES_DB: rating-service
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5436:5432"
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
     volumes:
-      - rating-db-data:/var/lib/postgresql/data
-
-  # База данных для payment-service
-  payment-db:
-    image: postgres:13
-    environment:
-      POSTGRES_DB: payment-service
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      - keycloak_db_data:/var/lib/postgresql/data
     ports:
-      - "5435:5432"
-    volumes:
-      - payment-db-data:/var/lib/postgresql/data
-
-  # База данных для passenger-service
-  passenger-db:
-    image: postgres:13
-    environment:
-      POSTGRES_DB: passenger-service
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5434:5432"
-    volumes:
-      - passenger-db-data:/var/lib/postgresql/data
-
-  # База данных для driver-service
+      - "5438:5432"
+    networks:
+      - taxi-network
+  # Базы данных
   driver-db:
     image: postgres:13
     environment:
@@ -73,8 +84,48 @@ services:
       - "5432:5432"
     volumes:
       - driver-db-data:/var/lib/postgresql/data
+    networks:
+      - taxi-network
 
-  # База данных для ride-service
+  passenger-db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: passenger-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - passenger-db-data:/var/lib/postgresql/data
+    networks:
+      - taxi-network
+
+  payment-db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: payment-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - payment-db-data:/var/lib/postgresql/data
+    networks:
+      - taxi-network
+
+  rating-db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: rating-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5436:5432"
+    volumes:
+      - rating-db-data:/var/lib/postgresql/data
+    networks:
+      - taxi-network
+
   ride-db:
     image: postgres:13
     environment:
@@ -85,81 +136,283 @@ services:
       - "5433:5432"
     volumes:
       - ride-db-data:/var/lib/postgresql/data
+    networks:
+      - taxi-network
 
-  # Сервис driver-service
+  # Микросервисы
+  eureka-server:
+    build:
+      context: .
+      dockerfile: eureka-server/Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    ports:
+      - "8761:8761"
+    environment:
+      EUREKA_CLIENT_REGISTER-WITH-EUREKA: "false"
+      EUREKA_CLIENT_FETCH-REGISTRY: "false"
+    networks:
+      - taxi-network
+
+  gateway-server:
+    build:
+      context: .
+      dockerfile: gateway-server/Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    ports:
+      - "8080:8080"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+    networks:
+      - taxi-network
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    ports:
+      - "8086:8086"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      KEYCLOAK_HOST: keycloak
+    depends_on:
+      - eureka-server
+      - keycloak
+    networks:
+      - taxi-network
+
   driver-service:
     build:
-      context: ./driver-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: driver-service/Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    volumes:
+      - ./driver-service/src:/workspace/driver-service/src
+      - ./driver-service/pom.xml:/workspace/driver-service/pom.xml
     ports:
       - "8085:8085"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://driver-db:5432/driver-service
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_APPLICATION_NAME: driver-service
+      SPRING_DEVTOOLS_REMOTE_SECRET: secret
+      SPRING_DEVTOOLS_LIVERELOAD_ENABLED: "true"
+      KEYCLOAK_HOST: keycloak
     depends_on:
       - driver-db
       - kafka
+      - eureka-server
+    networks:
+      - taxi-network
 
-  # Сервис passenger-service
   passenger-service:
     build:
-      context: ./passenger-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: passenger-service/Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    volumes:
+      - ./passenger-service/src:/workspace/passenger-service/src
+      - ./passenger-service/pom.xml:/workspace/passenger-service/pom.xml
     ports:
       - "8081:8081"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://passenger-db:5432/passenger-service
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_APPLICATION_NAME: passenger-service
+      SPRING_DEVTOOLS_REMOTE_SECRET: secret
+      KEYCLOAK_HOST: keycloak
     depends_on:
       - passenger-db
       - kafka
+      - eureka-server
+    networks:
+      - taxi-network
 
-  # Сервис payment-service
   payment-service:
     build:
-      context: ./payment-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: payment-service/Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    volumes:
+      - ./payment-service/src:/workspace/payment-service/src
+      - ./payment-service/pom.xml:/workspace/payment-service/pom.xml
     ports:
       - "8082:8082"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://payment-db:5432/payment-service
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_APPLICATION_NAME: payment-service
+      SPRING_DEVTOOLS_REMOTE_SECRET: secret
+      KEYCLOAK_HOST: keycloak
+
     depends_on:
       - payment-db
       - kafka
+      - eureka-server
+    networks:
+      - taxi-network
 
-  # Сервис rating-service
   rating-service:
     build:
-      context: ./rating-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: rating-service/Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    volumes:
+      - ./rating-service/src:/workspace/rating-service/src
+      - ./rating-service/pom.xml:/workspace/rating-service/pom.xml
     ports:
       - "8083:8083"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://rating-db:5432/rating-service
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_APPLICATION_NAME: rating-service
+      SPRING_DEVTOOLS_REMOTE_SECRET: secret
+      KEYCLOAK_HOST: keycloak
+
     depends_on:
       - rating-db
       - kafka
+      - eureka-server
+    networks:
+      - taxi-network
 
-  # Сервис ride-service
   ride-service:
     build:
-      context: ./rides-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: rides-service/Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    volumes:
+      - ./rides-service/src:/workspace/rides-service/src
+      - ./rides-service/pom.xml:/workspace/rides-service/pom.xml
     ports:
       - "8084:8084"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://ride-db:5432/rides-service
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_APPLICATION_NAME: rides-service
+      SPRING_DEVTOOLS_REMOTE_SECRET: secret
+      KEYCLOAK_HOST: keycloak
+
     depends_on:
       - ride-db
       - kafka
+      - eureka-server
+    networks:
+      - taxi-network
 
-# Тома для хранения данных PostgreSQL
+  # Мониторинг
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - taxi-network
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - taxi-network
+
+  # Логи
+
+  elasticsearch:
+    image: elasticsearch:8.12.0
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    networks:
+      - taxi-network
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    deploy:
+      resources:
+        limits:
+          memory: 768m
+  logstash:
+    image: logstash:8.12.0
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      LS_JAVA_OPTS: "-Xmx512m -Xms512m"
+    networks:
+      - taxi-network
+    depends_on:
+      - elasticsearch
+      - kafka
+  kibana:
+    image: kibana:8.12.0
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - taxi-network
+    depends_on:
+      - elasticsearch
+
+  # Трассировка
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - taxi-network
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=elasticsearch:9200
+    depends_on:
+      - elasticsearch
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8088:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+    depends_on:
+      - kafka
+      - zookeeper
+    networks:
+      - taxi-network
+
 volumes:
   driver-db-data:
   passenger-db-data:
   payment-db-data:
   rating-db-data:
   ride-db-data:
+  grafana-storage:
+  keycloak_db_data:
+  esdata:
+
+networks:
+  taxi-network:
+    driver: bridge
