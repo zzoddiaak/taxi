@@ -1,6 +1,5 @@
 package driver_service.driver_service.component;
 
-import driver_service.driver_service.component.TestContext;
 import driver_service.driver_service.dto.driver.DriverRequestDto;
 import driver_service.driver_service.dto.driver.DriverResponseDto;
 import driver_service.driver_service.dto.car.CarDto;
@@ -59,7 +58,6 @@ public class DriverStepDefinitions {
 
     @Given("an existing driver with id {long} and current average rating {double} from {int} ratings")
     public void an_existing_driver_with_id_and_current_average_rating_from_ratings(Long id, Double rating, Integer count) {
-        // В реальном тесте здесь будет создание тестового водителя через репозиторий
         testContext.setDriverId(id);
         testContext.setCurrentRating(rating);
         testContext.setRatingCount(count);
@@ -100,7 +98,6 @@ public class DriverStepDefinitions {
 
     @Given("a car already assigned to driver with id {long}")
     public void a_car_already_assigned_to_driver_with_id(Long driverId) {
-        // В реальном тесте здесь будет создание тестового водителя с автомобилем
         testContext.setExistingDriverId(driverId);
     }
 

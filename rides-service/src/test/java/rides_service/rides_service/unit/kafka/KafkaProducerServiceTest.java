@@ -22,65 +22,50 @@ class KafkaProducerServiceTest {
 
     @Test
     void sendAvailableRide_ShouldSendMessageToKafka() {
-        // Arrange
         String rideId = "1";
 
-        // Act
         kafkaProducerService.sendAvailableRide(rideId);
 
-        // Assert
         verify(kafkaTemplate, times(1)).send("available-rides", rideId);
     }
 
     @Test
     void sendRideAcceptance_ShouldSendMessageToKafka() {
-        // Arrange
         String rideId = "1";
         String driverId = "1";
         boolean accepted = true;
 
-        // Act
         kafkaProducerService.sendRideAcceptance(rideId, driverId, accepted);
 
-        // Assert
         verify(kafkaTemplate, times(1)).send("ride-acceptance", rideId + ":" + driverId + ":" + accepted);
     }
 
     @Test
     void sendRideStart_ShouldSendMessageToKafka() {
-        // Arrange
         String rideId = "1";
 
-        // Act
         kafkaProducerService.sendRideStart(rideId);
 
-        // Assert
         verify(kafkaTemplate, times(1)).send("ride-start", rideId);
     }
 
     @Test
     void sendRideEnd_ShouldSendMessageToKafka() {
-        // Arrange
         String rideId = "1";
 
-        // Act
         kafkaProducerService.sendRideEnd(rideId);
 
-        // Assert
         verify(kafkaTemplate, times(1)).send("ride-end", rideId);
     }
 
     @Test
     void sendRideCompleted_ShouldSendMessageToKafka() {
-        // Arrange
         String rideId = "1";
         String passengerId = "1";
         String amount = "100.00";
 
-        // Act
         kafkaProducerService.sendRideCompleted(rideId, passengerId, amount);
 
-        // Assert
         verify(kafkaTemplate, times(1)).send("ride-completed", rideId + ":" + passengerId + ":" + amount);
     }
 }

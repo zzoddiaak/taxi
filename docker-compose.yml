@@ -1,6 +1,6 @@
-version: '3.8'
 
 services:
+
   # Инфраструктурные сервисы
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -32,6 +32,47 @@ services:
     networks:
       - taxi-network
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.2
+    environment:
+      KEYCLOAK_ADMIN: daniil
+      KEYCLOAK_ADMIN_PASSWORD: daniil
+      KC_HOSTNAME_ADMIN: localhost
+
+
+      KC_HOSTNAME: keycloak
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+
+      KC_HTTP_PORT: 8181
+      KC_HTTP_ENABLED: true
+      KC_HTTPS_ENABLED: false
+
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+    command: start-dev
+    ports:
+      - "8181:8181"
+    depends_on:
+      - keycloak-db
+    networks:
+      - taxi-network
+
+  keycloak-db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+    ports:
+      - "5438:5432"
+    networks:
+      - taxi-network
   # Базы данных
   driver-db:
     image: postgres:13
@@ -128,6 +169,23 @@ services:
     networks:
       - taxi-network
 
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    ports:
+      - "8086:8086"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      KEYCLOAK_HOST: keycloak
+    depends_on:
+      - eureka-server
+      - keycloak
+    networks:
+      - taxi-network
+
   driver-service:
     build:
       context: .
@@ -146,6 +204,7 @@ services:
       SPRING_APPLICATION_NAME: driver-service
       SPRING_DEVTOOLS_REMOTE_SECRET: secret
       SPRING_DEVTOOLS_LIVERELOAD_ENABLED: "true"
+      KEYCLOAK_HOST: keycloak
     depends_on:
       - driver-db
       - kafka
@@ -170,6 +229,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       SPRING_APPLICATION_NAME: passenger-service
       SPRING_DEVTOOLS_REMOTE_SECRET: secret
+      KEYCLOAK_HOST: keycloak
     depends_on:
       - passenger-db
       - kafka
@@ -194,6 +254,8 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       SPRING_APPLICATION_NAME: payment-service
       SPRING_DEVTOOLS_REMOTE_SECRET: secret
+      KEYCLOAK_HOST: keycloak
+
     depends_on:
       - payment-db
       - kafka
@@ -218,6 +280,8 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       SPRING_APPLICATION_NAME: rating-service
       SPRING_DEVTOOLS_REMOTE_SECRET: secret
+      KEYCLOAK_HOST: keycloak
+
     depends_on:
       - rating-db
       - kafka
@@ -242,10 +306,100 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       SPRING_APPLICATION_NAME: rides-service
       SPRING_DEVTOOLS_REMOTE_SECRET: secret
+      KEYCLOAK_HOST: keycloak
+
     depends_on:
       - ride-db
       - kafka
       - eureka-server
+    networks:
+      - taxi-network
+
+  # Мониторинг
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - taxi-network
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - taxi-network
+
+  # Логи
+
+  elasticsearch:
+    image: elasticsearch:8.12.0
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    networks:
+      - taxi-network
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    deploy:
+      resources:
+        limits:
+          memory: 768m
+  logstash:
+    image: logstash:8.12.0
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      LS_JAVA_OPTS: "-Xmx512m -Xms512m"
+    networks:
+      - taxi-network
+    depends_on:
+      - elasticsearch
+      - kafka
+  kibana:
+    image: kibana:8.12.0
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - taxi-network
+    depends_on:
+      - elasticsearch
+
+  # Трассировка
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - taxi-network
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=elasticsearch:9200
+    depends_on:
+      - elasticsearch
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8088:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+    depends_on:
+      - kafka
+      - zookeeper
     networks:
       - taxi-network
 
@@ -255,6 +409,9 @@ volumes:
   payment-db-data:
   rating-db-data:
   ride-db-data:
+  grafana-storage:
+  keycloak_db_data:
+  esdata:
 
 networks:
   taxi-network:

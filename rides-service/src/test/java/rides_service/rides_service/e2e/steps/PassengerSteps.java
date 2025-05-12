@@ -46,7 +46,6 @@ public class PassengerSteps {
             context.setPassengerId("1");
             context.setPassengerBalance(100.00f);
 
-            // Also initialize the WireMock stub
             passengerWireMock.stubFor(
                     get(urlPathEqualTo("/api/passengers/1"))
                             .willReturn(aResponse()
@@ -86,14 +85,12 @@ public class PassengerSteps {
                 String passengerId = passenger.get("id");
                 float balance = Float.parseFloat(passenger.get("balance"));
 
-                // 1. Обновляем контекст, если это текущий пассажир
                 if (passengerId.equals(context.getPassengerId())) {
                     context.setPassengerBalance(balance);
                     System.out.printf("[SYNC] Updated context balance for passenger %s to %.2f%n",
                             passengerId, balance);
                 }
 
-                // 2. Создаем полный объект пассажира
                 Map<String, Object> passengerResponse = new HashMap<>();
                 passengerResponse.put("id", passengerId);
                 passengerResponse.put("firstName", passenger.get("firstName"));
@@ -108,10 +105,9 @@ public class PassengerSteps {
                 rating.put("ratingCount", 5);
                 passengerResponse.put("rating", rating);
 
-                // 3. Настраиваем заглушку с правильным форматом чисел
                 String responseBody = objectMapper.writeValueAsString(passengerResponse)
-                        .replace(".0,", ".0,") // гарантируем правильный формат
-                        .replace(",00", ".00"); // заменяем запятые на точки
+                        .replace(".0,", ".0,")
+                        .replace(",00", ".00");
 
                 passengerWireMock.stubFor(
                         get(urlPathEqualTo("/api/passengers/" + passengerId))
@@ -156,14 +152,11 @@ public class PassengerSteps {
         float currentBalance = context.getPassengerBalance();
         float newBalance = currentBalance - amountValue;
 
-        // Обновляем баланс в контексте
         context.setPassengerBalance(newBalance);
 
-        // Логирование для отладки
         System.out.printf("Deducting %.2f from passenger %s (current: %.2f, new: %.2f)%n",
                 amountValue, passengerId, currentBalance, newBalance);
 
-        // Обновляем мок для GET запросов
         passengerWireMock.stubFor(
                 get(urlPathEqualTo("/api/passengers/" + passengerId))
                         .willReturn(aResponse()
@@ -173,7 +166,6 @@ public class PassengerSteps {
                                         passengerId, newBalance))
                                 .withStatus(200)));
 
-        // Настраиваем мок для PUT запроса
         passengerWireMock.stubFor(
                 put(urlPathEqualTo("/api/passengers/" + passengerId + "/balance"))
                         .withRequestBody(equalToJson(
@@ -183,7 +175,6 @@ public class PassengerSteps {
                                 .withBody(String.format(Locale.US, "{\"newBalance\":%.2f}", newBalance))
                                 .withStatus(200)));
 
-        // Выполняем запрос
         given()
                 .baseUri(context.getPassengerServiceUrl())
                 .contentType("application/json")
@@ -242,7 +233,6 @@ public class PassengerSteps {
         float expected = Float.parseFloat(normalizedExpected);
         String passengerId = context.getPassengerId();
 
-        // Добавляем логирование для отладки
         System.out.println("Verifying balance for passenger: " + passengerId);
         System.out.println("Expected balance: " + expected);
 

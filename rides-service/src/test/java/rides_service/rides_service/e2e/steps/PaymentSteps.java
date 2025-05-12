@@ -32,7 +32,6 @@ public class PaymentSteps {
             throw new IllegalStateException("Ride ID is not set in test context");
         }
 
-        // Настраиваем мок для возврата платежа с указанной суммой
         paymentWireMock.stubFor(
                 get(urlPathEqualTo("/api/payments/ride/" + context.getRideId()))
                         .willReturn(aResponse()

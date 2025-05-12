@@ -18,7 +18,8 @@
 		<module>payment-service</module>
         <module>gateway-server</module>
 		<module>eureka-server</module>
-	</modules>
+        <module>auth-service</module>
+    </modules>
 
 	<dependencyManagement>
 		<dependencies>
