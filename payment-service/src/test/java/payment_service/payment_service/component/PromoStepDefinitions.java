@@ -52,7 +52,6 @@ public class PromoStepDefinitions {
 
     @When("I get promo code by code {string}")
     public void i_get_promo_code_by_code(String code) {
-        // Сохраняем сущность в контекст
         testContext.setPromoCodeEntity(
                 promoCodeService.getPromoCodeByCode(code)
         );
