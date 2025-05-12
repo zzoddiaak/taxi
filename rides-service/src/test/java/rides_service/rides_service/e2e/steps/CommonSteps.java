@@ -71,7 +71,6 @@ public class CommonSteps {
             }
         } catch (Exception e) {
             System.err.println("Failed to start " + serverName + " WireMock server: " + e.getMessage());
-            // Попытка остановить и перезапустить сервер
             try {
                 if (server.isRunning()) {
                     server.stop();
@@ -139,7 +138,6 @@ public class CommonSteps {
                                 .withBody("{\"status\":\"UP\"}")
                                 .withStatus(200)));
 
-        // Мок для пассажира с рейтингом
         passengerWireMock.stubFor(
                 get(urlPathEqualTo("/api/passengers/2"))
                         .willReturn(aResponse()
@@ -147,7 +145,6 @@ public class CommonSteps {
                                 .withBody("{\"id\":2,\"firstName\":\"Jane\",\"lastName\":\"Smith\",\"rating\":{\"averageRating\":4.0,\"ratingCount\":3}}")
                                 .withStatus(200)));
 
-        // Мок для обновления рейтинга пассажира
         passengerWireMock.stubFor(
                 put(urlPathMatching("/api/passengers/2/rating"))
                         .willReturn(aResponse()
@@ -175,7 +172,6 @@ public class CommonSteps {
                                 .withBody("{\"status\":\"UP\"}")
                                 .withStatus(200)));
 
-        // Общий мок для получения информации о водителе
         driverWireMock.stubFor(
                 get(urlPathMatching("/api/v1/drivers/.*"))
                         .willReturn(aResponse()
@@ -183,7 +179,6 @@ public class CommonSteps {
                                 .withBody("{\"id\":1,\"firstName\":\"Mike\",\"lastName\":\"Johnson\",\"available\":true,\"rating\":{\"averageRating\":4.5,\"ratingCount\":10}}")
                                 .withStatus(200)));
 
-        // Мок для обновления рейтинга (используется в сценарии Driver rating updates)
         driverWireMock.stubFor(
                 put(urlPathMatching("/api/v1/drivers/1/rating"))
                         .willReturn(aResponse()
@@ -191,14 +186,12 @@ public class CommonSteps {
                                 .withBody("{\"averageRating\":4.363,\"ratingCount\":11}")
                                 .withStatus(200)));
 
-        // Мок для другого сценария с рейтингом
         driverWireMock.stubFor(
                 put(urlPathMatching("/api/v1/drivers/2/rating"))
                         .willReturn(aResponse()
                                 .withHeader("Content-Type", "application/json")
                                 .withBody("{\"averageRating\":4.166,\"ratingCount\":6}")
                                 .withStatus(200)));
-        // Добавляем мок для завершения поездки
         driverWireMock.stubFor(
                 post(urlPathMatching("/api/v1/drivers/.*/end-ride/.*"))
                         .willReturn(aResponse()
@@ -276,7 +269,6 @@ public class CommonSteps {
                                 .withBody("{\"status\":\"UP\"}")
                                 .withStatus(200)));
 
-        // Мок для получения среднего рейтинга
         ratingWireMock.stubFor(
                 get(urlPathMatching("/api/ratings/average/.*"))
                         .willReturn(aResponse()
@@ -284,7 +276,6 @@ public class CommonSteps {
                                 .withBody("{\"averageRating\":4.363}")
                                 .withStatus(200)));
 
-        // Мок для создания рейтинга
         ratingWireMock.stubFor(
                 post(urlPathEqualTo("/api/ratings"))
                         .willReturn(aResponse()

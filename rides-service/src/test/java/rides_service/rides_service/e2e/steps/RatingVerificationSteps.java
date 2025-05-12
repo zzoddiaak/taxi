@@ -45,7 +45,7 @@ public class RatingVerificationSteps {
                 .then()
                 .statusCode(200)
                 .body("rating.averageRating.toString()",
-                        equalTo("4.5")); // Сравниваем как строки
+                        equalTo("4.5"));
     }
 
     @Then("passenger {string}'s average rating should be updated")
