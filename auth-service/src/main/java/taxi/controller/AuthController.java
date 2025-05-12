@@ -39,15 +39,4 @@ public class AuthController {
         return ResponseEntity.ok(keycloakService.refreshToken(request.getRefreshToken()));
     }
 
-    @GetMapping("/user-info")
-    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaim("preferred_username");
-        List<String> roles = jwt.getClaimAsStringList("roles");
-        return ResponseEntity.ok(Map.of(
-                "username", username,
-                "roles", roles
-        ));
-    }
-
-
 }
